@@ -7,11 +7,6 @@ on:
       - dev
     tags:
       - "v*"
-    paths:
-      - "packages/app/**"
-      - "packages/ui/**"
-      - "packages/desktop/**"
-      - ".github/workflows/cadence-windows.yml"
   workflow_dispatch:
 
 permissions:
@@ -77,4 +72,3 @@ jobs:
           releaseAssetNamePattern: cadence-desktop-[platform]-[arch][ext]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
