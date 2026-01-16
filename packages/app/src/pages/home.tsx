@@ -22,11 +22,6 @@ export default function Home() {
   const server = useServer()
   const homedir = createMemo(() => sync.data.path.home)
 
-  function openProjectCode(directory: string) {
-    layout.projects.open(directory)
-    navigate(`/${base64Encode(directory)}`)
-  }
-
   function openProjectChat(directory: string) {
     layout.projects.open(directory)
     navigate(`/chat/${base64Encode(directory)}/session`)
@@ -125,15 +120,6 @@ export default function Home() {
                         <div class="text-14-regular text-text-weak">
                           {DateTime.fromMillis(project.time.updated ?? project.time.created).toRelative()}
                         </div>
-                      </Button>
-                      <Button
-                        size="large"
-                        variant="secondary"
-                        class="px-3"
-                        onClick={() => openProjectCode(project.worktree)}
-                      >
-                        <Icon name="layout-right" size="small" />
-                        编程
                       </Button>
                     </div>
                   )}

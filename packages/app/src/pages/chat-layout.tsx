@@ -25,7 +25,7 @@ export default function ChatLayout(props: ParentProps) {
       category: "Cadence",
       slash: "templates",
       suggested: true,
-      onSelect: () => navigate(`/templates?return=${encodeURIComponent(location.pathname)}`),
+      onSelect: () => navigate(`/chat/templates?return=${encodeURIComponent(location.pathname)}`),
     },
     {
       id: "cadence.settings",
@@ -33,7 +33,7 @@ export default function ChatLayout(props: ParentProps) {
       description: "主题、快捷键与通用设置",
       category: "Cadence",
       slash: "settings",
-      onSelect: () => navigate("/settings"),
+      onSelect: () => navigate("/chat/settings"),
     },
     {
       id: "cadence.projects",

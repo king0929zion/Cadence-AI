@@ -72,7 +72,7 @@ export default function ChatHome() {
                 <Icon name="bubble-5" size="small" />
                 新对话
               </Button>
-              <Button size="large" variant="secondary" onClick={() => navigate("/templates")}>
+              <Button size="large" variant="secondary" onClick={() => navigate("/chat/templates")}>
                 <Icon name="dot-grid" size="small" />
                 模板库
               </Button>
@@ -115,11 +115,11 @@ export default function ChatHome() {
           <div class="mt-6 cadence-card p-4">
             <div class="text-14-medium text-text-strong">快捷入口</div>
             <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
-              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/templates")}>
+              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/chat/templates")}>
                 <Icon name="dot-grid" size="small" />
                 写作 / 翻译 / 总结模板
               </Button>
-              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/settings")}>
+              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/chat/settings")}>
                 <Icon name="settings-gear" size="small" />
                 主题与快捷键
               </Button>

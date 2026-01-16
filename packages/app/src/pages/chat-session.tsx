@@ -72,14 +72,6 @@ export default function ChatSession() {
     promptDockObserver = undefined
   })
 
-  const openCodeView = () => {
-    if (params.id) {
-      navigate(`/${params.dir}/session/${params.id}`)
-      return
-    }
-    navigate(`/${params.dir}/session`)
-  }
-
   return (
     <div
       class="relative size-full overflow-hidden flex flex-col bg-background-base"
@@ -98,14 +90,10 @@ export default function ChatSession() {
           <Button
             size="small"
             variant="ghost"
-            onClick={() => navigate(`/templates?return=${encodeURIComponent(window.location.pathname)}`)}
+            onClick={() => navigate(`/chat/templates?return=${encodeURIComponent(window.location.pathname)}`)}
           >
             <Icon name="dot-grid" size="small" />
             模板
-          </Button>
-          <Button size="small" variant="secondary" onClick={openCodeView}>
-            <Icon name="layout-right" size="small" />
-            编程视图
           </Button>
         </div>
       </header>

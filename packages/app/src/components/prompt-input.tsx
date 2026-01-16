@@ -1696,7 +1696,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                       type="button"
                       variant="ghost"
                       class="size-6"
-                      onClick={() => navigate(`/templates?return=${encodeURIComponent(location.pathname)}`)}
+                      onClick={() => navigate(`/chat/templates?return=${encodeURIComponent(location.pathname)}`)}
                     >
                       <Icon name="dot-grid" class="size-4.5" />
                     </Button>

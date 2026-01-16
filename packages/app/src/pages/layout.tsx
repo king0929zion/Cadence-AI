@@ -4,7 +4,14 @@ import CodeLayout from "@/pages/code-layout"
 import ChatLayout from "@/pages/chat-layout"
 
 function isCadenceChatRoute(pathname: string) {
-  return pathname === "/chat" || pathname.startsWith("/chat/") || pathname === "/templates" || pathname === "/settings"
+  return (
+    pathname === "/chat" ||
+    pathname.startsWith("/chat/") ||
+    pathname === "/templates" ||
+    pathname === "/settings" ||
+    pathname === "/chat/templates" ||
+    pathname === "/chat/settings"
+  )
 }
 
 export default function Layout(props: ParentProps) {
@@ -20,4 +27,3 @@ export default function Layout(props: ParentProps) {
     </Switch>
   )
 }
-

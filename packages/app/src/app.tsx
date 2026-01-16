@@ -137,6 +137,22 @@ export function AppInterface(props: { defaultUrl?: string }) {
                   </Suspense>
                 )}
               />
+              <Route
+                path="/chat/templates"
+                component={() => (
+                  <Suspense fallback={<Loading />}>
+                    <TemplateLibrary />
+                  </Suspense>
+                )}
+              />
+              <Route
+                path="/chat/settings"
+                component={() => (
+                  <Suspense fallback={<Loading />}>
+                    <Settings />
+                  </Suspense>
+                )}
+              />
               <Route path="/chat/:dir" component={ChatDirectoryLayout}>
                 <Route path="/" component={() => <Navigate href="session" />} />
                 <Route
@@ -156,19 +172,11 @@ export function AppInterface(props: { defaultUrl?: string }) {
               </Route>
               <Route
                 path="/templates"
-                component={() => (
-                  <Suspense fallback={<Loading />}>
-                    <TemplateLibrary />
-                  </Suspense>
-                )}
+                component={() => <Navigate href="/chat/templates" />}
               />
               <Route
                 path="/settings"
-                component={() => (
-                  <Suspense fallback={<Loading />}>
-                    <Settings />
-                  </Suspense>
-                )}
+                component={() => <Navigate href="/chat/settings" />}
               />
             </Router>
           </GlobalSyncProvider>

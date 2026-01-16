@@ -44,7 +44,7 @@ export default function TemplateLibrary() {
               <Icon name="bubble-5" size="small" />
               返回对话
             </Button>
-            <Button size="large" onClick={() => navigate("/settings")}>
+            <Button size="large" onClick={() => navigate("/chat/settings")}>
               <Icon name="settings-gear" size="small" />
               设置
             </Button>
