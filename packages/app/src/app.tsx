@@ -23,12 +23,19 @@ import { CommandProvider } from "@/context/command"
 import { Logo } from "@opencode-ai/ui/logo"
 import Layout from "@/pages/layout"
 import DirectoryLayout from "@/pages/directory-layout"
+import ChatDirectoryLayout from "@/pages/chat-directory-layout"
+import { ConversationProvider } from "@/context/conversation"
+import { TemplateProvider } from "@/context/template"
 import { ErrorPage } from "./pages/error"
 import { iife } from "@opencode-ai/util/iife"
 import { Suspense } from "solid-js"
 
 const Home = lazy(() => import("@/pages/home"))
 const Session = lazy(() => import("@/pages/session"))
+const ChatHome = lazy(() => import("@/pages/chat-home"))
+const ChatSession = lazy(() => import("@/pages/chat-session"))
+const TemplateLibrary = lazy(() => import("@/pages/template-library"))
+const Settings = lazy(() => import("@/pages/settings"))
 const Loading = () => <div class="size-full flex items-center justify-center text-text-weak">Loading...</div>
 
 declare global {
@@ -83,13 +90,17 @@ export function AppInterface(props: { defaultUrl?: string }) {
             <Router
               root={(props) => (
                 <PermissionProvider>
-                  <LayoutProvider>
-                    <NotificationProvider>
-                      <CommandProvider>
-                        <Layout>{props.children}</Layout>
-                      </CommandProvider>
-                    </NotificationProvider>
-                  </LayoutProvider>
+                  <TemplateProvider>
+                    <ConversationProvider>
+                      <LayoutProvider>
+                        <NotificationProvider>
+                          <CommandProvider>
+                            <Layout>{props.children}</Layout>
+                          </CommandProvider>
+                        </NotificationProvider>
+                      </LayoutProvider>
+                    </ConversationProvider>
+                  </TemplateProvider>
                 </PermissionProvider>
               )}
             >
@@ -118,6 +129,47 @@ export function AppInterface(props: { defaultUrl?: string }) {
                   )}
                 />
               </Route>
+              <Route
+                path="/chat"
+                component={() => (
+                  <Suspense fallback={<Loading />}>
+                    <ChatHome />
+                  </Suspense>
+                )}
+              />
+              <Route path="/chat/:dir" component={ChatDirectoryLayout}>
+                <Route path="/" component={() => <Navigate href="session" />} />
+                <Route
+                  path="/session/:id?"
+                  component={() => (
+                    <TerminalProvider>
+                      <FileProvider>
+                        <PromptProvider>
+                          <Suspense fallback={<Loading />}>
+                            <ChatSession />
+                          </Suspense>
+                        </PromptProvider>
+                      </FileProvider>
+                    </TerminalProvider>
+                  )}
+                />
+              </Route>
+              <Route
+                path="/templates"
+                component={() => (
+                  <Suspense fallback={<Loading />}>
+                    <TemplateLibrary />
+                  </Suspense>
+                )}
+              />
+              <Route
+                path="/settings"
+                component={() => (
+                  <Suspense fallback={<Loading />}>
+                    <Settings />
+                  </Suspense>
+                )}
+              />
             </Router>
           </GlobalSyncProvider>
         </GlobalSDKProvider>

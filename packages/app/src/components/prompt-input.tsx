@@ -28,7 +28,7 @@ import {
 } from "@/context/prompt"
 import { useLayout } from "@/context/layout"
 import { useSDK } from "@/context/sdk"
-import { useNavigate, useParams } from "@solidjs/router"
+import { useLocation, useNavigate, useParams } from "@solidjs/router"
 import { useSync } from "@/context/sync"
 import { FileIcon } from "@opencode-ai/ui/file-icon"
 import { Button } from "@opencode-ai/ui/button"
@@ -55,6 +55,7 @@ import { createOpencodeClient, type Message, type Part } from "@opencode-ai/sdk/
 import { Binary } from "@opencode-ai/util/binary"
 import { showToast } from "@opencode-ai/ui/toast"
 import { base64Encode } from "@opencode-ai/util/encode"
+import { useTemplate } from "@/context/template"
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"]
 const ACCEPTED_FILE_TYPES = [...ACCEPTED_IMAGE_TYPES, "application/pdf"]
@@ -66,7 +67,7 @@ interface PromptInputProps {
   onNewSessionWorktreeReset?: () => void
 }
 
-const PLACEHOLDERS = [
+const CODE_PLACEHOLDERS = [
   "Fix a TODO in the codebase",
   "What is the tech stack of this project?",
   "Fix broken tests",
@@ -94,6 +95,16 @@ const PLACEHOLDERS = [
   "How do environment variables work here?",
 ]
 
+const CADENCE_PLACEHOLDERS = [
+  "帮我总结一段文字，并给出行动项",
+  "把这段内容翻译成英文（保留格式）",
+  "写一封专业且简洁的邮件",
+  "整理会议纪要：结论/决定/待办",
+  "给我一个利弊分析与建议",
+  "生成一个 7 天计划/清单",
+  "把内容改写得更清晰、更有条理",
+]
+
 interface SlashCommand {
   id: string
   trigger: string
@@ -105,6 +116,7 @@ interface SlashCommand {
 
 export const PromptInput: Component<PromptInputProps> = (props) => {
   const navigate = useNavigate()
+  const location = useLocation()
   const sdk = useSDK()
   const sync = useSync()
   const globalSync = useGlobalSync()
@@ -112,6 +124,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
   const local = useLocal()
   const files = useFile()
   const prompt = usePrompt()
+  const templates = useTemplate()
   const layout = useLayout()
   const params = useParams()
   const dialog = useDialog()
@@ -122,6 +135,9 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
   let fileInputRef!: HTMLInputElement
   let scrollRef!: HTMLDivElement
   let slashPopoverRef!: HTMLDivElement
+
+  const isCadenceMode = createMemo(() => location.pathname === "/chat" || location.pathname.startsWith("/chat/"))
+  const placeholders = createMemo(() => (isCadenceMode() ? CADENCE_PLACEHOLDERS : CODE_PLACEHOLDERS))
 
   const scrollCursorIntoView = () => {
     const container = scrollRef
@@ -184,7 +200,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
     popover: null,
     historyIndex: -1,
     savedPrompt: null,
-    placeholder: Math.floor(Math.random() * PLACEHOLDERS.length),
+    placeholder: Math.floor(Math.random() * placeholders().length),
     dragging: false,
     mode: "normal",
     applyingHistory: false,
@@ -258,7 +274,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
     editorRef.focus()
     if (params.id) return
     const interval = setInterval(() => {
-      setStore("placeholder", (prev) => (prev + 1) % PLACEHOLDERS.length)
+      setStore("placeholder", (prev) => (prev + 1) % placeholders().length)
     }, 6500)
     onCleanup(() => clearInterval(interval))
   })
@@ -779,6 +795,23 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
     setStore("popover", null)
   }
 
+  createEffect(
+    on(
+      () => templates.pendingInsert(),
+      (pending) => {
+        if (!pending) return
+        requestAnimationFrame(() => {
+          const content = templates.consumePendingInsert()
+          if (!content) return
+          editorRef.focus()
+          const position = promptLength(prompt.current())
+          setCursorPosition(editorRef, position)
+          addPart({ type: "text", content, start: 0, end: 0 })
+        })
+      },
+    ),
+  )
+
   const abort = () =>
     sdk.client.session
       .abort({
@@ -1057,7 +1090,10 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
     let session = info()
     if (!session && isNewSession) {
       session = await client.session.create().then((x) => x.data ?? undefined)
-      if (session) navigate(`/${base64Encode(sessionDirectory)}/session/${session.id}`)
+      if (session) {
+        const slug = base64Encode(sessionDirectory)
+        navigate(isCadenceMode() ? `/chat/${slug}/session/${session.id}` : `/${slug}/session/${session.id}`)
+      }
     }
     if (!session) return
 
@@ -1542,8 +1578,12 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
           <Show when={!prompt.dirty()}>
             <div class="absolute top-0 inset-x-0 px-5 py-3 pr-12 text-14-regular text-text-weak pointer-events-none whitespace-nowrap truncate">
               {store.mode === "shell"
-                ? "Enter shell command..."
-                : `Ask anything... "${PLACEHOLDERS[store.placeholder]}"`}
+                ? isCadenceMode()
+                  ? "输入 Shell 命令…"
+                  : "Enter shell command..."
+                : isCadenceMode()
+                  ? `随便聊聊… "${placeholders()[store.placeholder % placeholders().length]}"`
+                  : `Ask anything... "${placeholders()[store.placeholder % placeholders().length]}"`}
             </div>
           </Show>
         </div>
@@ -1649,7 +1689,19 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
             <div class="flex items-center gap-2">
               <SessionContextUsage />
               <Show when={store.mode === "normal"}>
-                <Tooltip placement="top" value="Attach file">
+                <Show when={isCadenceMode()}>
+                  <Tooltip placement="top" value="模板">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      class="size-6"
+                      onClick={() => navigate(`/templates?return=${encodeURIComponent(location.pathname)}`)}
+                    >
+                      <Icon name="dot-grid" class="size-4.5" />
+                    </Button>
+                  </Tooltip>
+                </Show>
+                <Tooltip placement="top" value="添加附件">
                   <Button type="button" variant="ghost" class="size-6" onClick={() => fileInputRef.click()}>
                     <Icon name="photo" class="size-4.5" />
                   </Button>
@@ -1663,13 +1715,13 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                 <Switch>
                   <Match when={working()}>
                     <div class="flex items-center gap-2">
-                      <span>Stop</span>
+                      <span>停止</span>
                       <span class="text-icon-base text-12-medium text-[10px]!">ESC</span>
                     </div>
                   </Match>
                   <Match when={true}>
                     <div class="flex items-center gap-2">
-                      <span>Send</span>
+                      <span>发送</span>
                       <Icon name="enter" size="small" class="text-icon-base" />
                     </div>
                   </Match>

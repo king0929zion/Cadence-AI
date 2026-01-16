@@ -94,7 +94,7 @@ const targets = singleFlag
     })
   : allTargets
 
-await $`rm -rf dist`
+await fs.promises.rm(path.join(dir, "dist"), { recursive: true, force: true })
 
 const binaries: Record<string, string> = {}
 if (!skipInstall) {
@@ -113,7 +113,7 @@ for (const item of targets) {
     .filter(Boolean)
     .join("-")
   console.log(`building ${name}`)
-  await $`mkdir -p dist/${name}/bin`
+  await fs.promises.mkdir(path.join(dir, "dist", name, "bin"), { recursive: true })
 
   const parserWorker = fs.realpathSync(path.resolve(dir, "./node_modules/@opentui/core/parser.worker.js"))
   const workerPath = "./src/cli/cmd/tui/worker.ts"
@@ -148,7 +148,7 @@ for (const item of targets) {
     },
   })
 
-  await $`rm -rf ./dist/${name}/bin/tui`
+  await fs.promises.rm(path.join(dir, "dist", name, "bin", "tui"), { recursive: true, force: true })
   await Bun.file(`dist/${name}/package.json`).write(
     JSON.stringify(
       {
