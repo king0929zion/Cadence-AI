@@ -57,7 +57,7 @@ jobs:
           RUST_TARGET: x86_64-pc-windows-msvc
 
       - name: Build frontend (preflight)
-        run: bun run --cwd packages/desktop build
+        run: bun run --cwd packages/desktop build:ci
         env:
           CI: true
 

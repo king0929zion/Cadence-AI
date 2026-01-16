@@ -9,6 +9,7 @@
     "predev": "bun ./scripts/predev.ts",
     "dev": "vite",
     "build": "bun run typecheck && vite build",
+    "build:ci": "vite build",
     "preview": "vite preview",
     "tauri": "tauri"
   },
