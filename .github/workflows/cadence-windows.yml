@@ -12,6 +12,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: cadence-windows-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -24,6 +28,12 @@ jobs:
 
       - name: Setup Bun
         uses: ./.github/actions/setup-bun
+
+      - name: Versions
+        run: |
+          bun --version
+          rustc -V
+          cargo -V
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
@@ -46,6 +56,11 @@ jobs:
         env:
           RUST_TARGET: x86_64-pc-windows-msvc
 
+      - name: Build frontend (preflight)
+        run: bun run --cwd packages/desktop build
+        env:
+          CI: true
+
       - name: Build (workflow artifacts)
         if: ${{ !startsWith(github.ref, 'refs/tags/') }}
         uses: tauri-apps/tauri-action@390cbe447412ced1303d35abe75287949e43437a
@@ -56,6 +71,7 @@ jobs:
           uploadWorkflowArtifacts: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUST_BACKTRACE: 1
 
       - name: Build and publish release (tags)
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
@@ -72,3 +88,4 @@ jobs:
           releaseAssetNamePattern: cadence-desktop-[platform]-[arch][ext]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUST_BACKTRACE: 1
