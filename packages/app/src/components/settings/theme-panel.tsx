@@ -1,4 +1,4 @@
-import { For, createMemo } from "solid-js"
+﻿import { For, createMemo } from "solid-js"
 import { useTheme, type ColorScheme } from "@opencode-ai/ui/theme"
 
 const OPTIONS: { value: ColorScheme; label: string; description: string }[] = [
@@ -15,7 +15,7 @@ export function ThemePanel() {
     <div class="flex flex-col gap-3">
       <div>
         <div class="text-14-medium text-text-strong">主题</div>
-        <div class="mt-1 text-12-regular text-text-weak">深色/浅色/跟随系统</div>
+        <div class="mt-1 text-12-regular text-text-weak">深色 / 浅色 / 跟随系统</div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -38,4 +38,3 @@ export function ThemePanel() {
     </div>
   )
 }
-

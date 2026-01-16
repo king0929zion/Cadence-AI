@@ -7,7 +7,7 @@ export function TemplateCard(props: { template: TemplateModel; onUse?: (t: Templ
   const handleUse = () => props.onUse?.(props.template)
 
   return (
-    <div class="rounded-md border border-border-weak-base bg-surface-raised-base/20 p-4 flex flex-col gap-3">
+    <div class="cadence-card p-4 flex flex-col gap-3">
       <div class="flex items-start justify-between gap-3">
         <div class="min-w-0">
           <div class="text-14-medium text-text-strong truncate">{props.template.title}</div>

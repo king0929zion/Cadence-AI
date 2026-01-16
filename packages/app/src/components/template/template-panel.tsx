@@ -1,4 +1,4 @@
-import { createMemo, For } from "solid-js"
+﻿import { createMemo, For } from "solid-js"
 import { createStore } from "solid-js/store"
 import { TextField } from "@opencode-ai/ui/text-field"
 import { TemplateCard } from "./template-card"
@@ -33,7 +33,7 @@ export function TemplatePanel(props: { templates: TemplateModel[]; onUse: (t: Te
       <div class="flex flex-col md:flex-row gap-2 md:items-center md:justify-between">
         <TextField
           value={store.query}
-          placeholder="搜索模板（标题/内容）"
+          placeholder="搜索模板（标题、描述或内容）"
           class="w-full md:w-96"
           onInput={(e) => setStore("query", e.currentTarget.value)}
         />

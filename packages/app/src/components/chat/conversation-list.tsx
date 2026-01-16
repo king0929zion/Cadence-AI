@@ -22,7 +22,7 @@ export function ConversationList(props: {
             <Button
               size="large"
               variant="ghost"
-              class="w-full justify-between px-2"
+              class="cadence-list-item w-full justify-between px-2"
               data-selected={session.id === props.selectedId}
               onClick={() => props.onSelect(session)}
             >
@@ -37,4 +37,3 @@ export function ConversationList(props: {
     </ul>
   )
 }
-

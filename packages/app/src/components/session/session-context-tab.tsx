@@ -87,31 +87,31 @@ export function SessionContextTab(props: SessionContextTabProps) {
   })
 
   const number = (value: number | null | undefined) => {
-    if (value === undefined) return "—"
-    if (value === null) return "—"
+    if (value === undefined) return "N/A"
+    if (value === null) return "N/A"
     return value.toLocaleString()
   }
 
   const percent = (value: number | null | undefined) => {
-    if (value === undefined) return "—"
-    if (value === null) return "—"
+    if (value === undefined) return "N/A"
+    if (value === null) return "N/A"
     return value.toString() + "%"
   }
 
   const time = (value: number | undefined) => {
-    if (!value) return "—"
+    if (!value) return "N/A"
     return DateTime.fromMillis(value).toLocaleString(DateTime.DATETIME_MED)
   }
 
   const providerLabel = createMemo(() => {
     const c = ctx()
-    if (!c) return "—"
+    if (!c) return "N/A"
     return c.provider?.name ?? c.message.providerID
   })
 
   const modelLabel = createMemo(() => {
     const c = ctx()
-    if (!c) return "—"
+    if (!c) return "N/A"
     if (c.model?.name) return c.model.name
     return c.message.modelID
   })
@@ -243,7 +243,7 @@ export function SessionContextTab(props: SessionContextTabProps) {
     const c = ctx()
     const count = counts()
     return [
-      { label: "Session", value: props.info()?.title ?? params.id ?? "—" },
+      { label: "Session", value: props.info()?.title ?? params.id ?? "N/A" },
       { label: "Messages", value: count.all.toLocaleString() },
       { label: "Provider", value: providerLabel() },
       { label: "Model", value: modelLabel() },

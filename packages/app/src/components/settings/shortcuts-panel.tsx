@@ -1,10 +1,10 @@
-import { For } from "solid-js"
+﻿import { For } from "solid-js"
 
 const SHORTCUTS = [
-  { action: "新建对话", keys: ["Ctrl/⌘", "N"] },
-  { action: "搜索对话", keys: ["Ctrl/⌘", "F"] },
-  { action: "打开模板", keys: ["Ctrl/⌘", "T"] },
-  { action: "发送消息", keys: ["Ctrl/⌘", "Enter"] },
+  { action: "新建对话", keys: ["Ctrl/Cmd", "N"] },
+  { action: "搜索对话", keys: ["Ctrl/Cmd", "F"] },
+  { action: "打开模板", keys: ["Ctrl/Cmd", "T"] },
+  { action: "发送消息", keys: ["Ctrl/Cmd", "Enter"] },
 ]
 
 export function ShortcutsPanel() {
@@ -12,7 +12,7 @@ export function ShortcutsPanel() {
     <div class="flex flex-col gap-3">
       <div>
         <div class="text-14-medium text-text-strong">快捷键</div>
-        <div class="mt-1 text-12-regular text-text-weak">后续会支持自定义绑定</div>
+        <div class="mt-1 text-12-regular text-text-weak">后续支持自定义绑定。</div>
       </div>
 
       <div class="rounded-md border border-border-weak-base overflow-hidden">
@@ -36,4 +36,3 @@ export function ShortcutsPanel() {
     </div>
   )
 }
-

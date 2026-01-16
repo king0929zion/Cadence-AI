@@ -1,4 +1,4 @@
-import { For, Match, Show, Switch, createMemo, onCleanup, onMount } from "solid-js"
+﻿import { For, Match, Show, Switch, createMemo, onCleanup, onMount } from "solid-js"
 import { createStore } from "solid-js/store"
 import { useNavigate, useParams } from "@solidjs/router"
 import { PromptInput } from "@/components/prompt-input"
@@ -14,7 +14,7 @@ import { useTemplate } from "@/context/template"
 const QUICK_REPLIES = [
   "帮我把这段文字总结成要点和行动项：",
   "请把下面内容翻译成英文并保留格式：",
-  "帮我写一封专业简洁的邮件，信息如下：",
+  "帮我写一封简洁专业的邮件，信息如下：",
   "我需要一个利弊分析与建议，问题是：",
 ]
 
@@ -87,7 +87,7 @@ export default function ChatSession() {
         "--prompt-height": store.promptHeight ? `${store.promptHeight}px` : undefined,
       }}
     >
-      <header class="h-12 px-4 flex items-center justify-between border-b border-border-weak-base bg-background-stronger">
+      <header class="cadence-session-header h-12 px-4 flex items-center justify-between">
         <div class="min-w-0 flex items-center gap-2">
           <div class="text-14-medium text-text-strong truncate">{title()}</div>
           <Show when={sync.data.path.directory}>
@@ -119,17 +119,19 @@ export default function ChatSession() {
         <div ref={autoScroll.contentRef} class="mx-auto w-full max-w-3xl px-4 py-6 flex flex-col gap-6">
           <Switch>
             <Match when={!params.id}>
-              <div class="rounded-md border border-border-weak-base bg-surface-raised-base/20 p-4">
+              <div class="cadence-card p-4">
                 <div class="text-14-medium text-text-strong">开始一个新对话</div>
-                <div class="mt-1 text-12-regular text-text-weak">支持图片/文件附件、模板与快捷指令（逐步完善）。</div>
+                <div class="mt-1 text-12-regular text-text-weak">
+                  支持图片和 PDF 附件、模板与快捷指令（持续完善）。
+                </div>
                 <div class="mt-4 flex flex-wrap gap-2">
                   <For each={QUICK_REPLIES}>
                     {(text) => (
                       <button
-                        class="h-8 px-3 rounded-full border border-border-weak-base bg-surface-base text-12-medium text-text-weak hover:bg-surface-raised-base-hover"
+                        class="cadence-chip h-8 px-3 text-12-medium text-text-weak"
                         onClick={() => templates.queueInsert(text + "\n\n")}
                       >
-                        {text.replace(/：$/, "")}
+                        {text}
                       </button>
                     )}
                   </For>
@@ -137,7 +139,7 @@ export default function ChatSession() {
               </div>
             </Match>
             <Match when={params.id && userMessages().length === 0}>
-              <div class="text-12-regular text-text-weak">暂无消息，发一条开始吧。</div>
+              <div class="text-12-regular text-text-weak">暂时没有消息，发一条开始吧。</div>
             </Match>
             <Match when={true}>
               <For each={userMessages()}>
@@ -169,14 +171,14 @@ export default function ChatSession() {
         ref={(el) => {
           promptDockRef = el
         }}
-        class="absolute inset-x-0 bottom-0 pt-10 pb-4 flex justify-center px-4 bg-gradient-to-t from-background-stronger via-background-stronger to-transparent pointer-events-none"
+        class="absolute inset-x-0 bottom-0 pt-10 pb-4 flex justify-center px-4 cadence-gradient pointer-events-none"
       >
         <div class="w-full max-w-3xl pointer-events-auto">
           <Show
             when={prompt.ready()}
             fallback={
               <div class="w-full min-h-32 rounded-md border border-border-weak-base bg-background-base/50 px-4 py-3 text-text-weak whitespace-pre-wrap pointer-events-none">
-                Loading prompt...
+                正在加载输入框...
               </div>
             }
           >
@@ -190,4 +192,3 @@ export default function ChatSession() {
     </div>
   )
 }
-

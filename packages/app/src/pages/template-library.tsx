@@ -1,4 +1,4 @@
-import { createMemo } from "solid-js"
+﻿import { createMemo } from "solid-js"
 import { useLocation, useNavigate } from "@solidjs/router"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
@@ -32,12 +32,12 @@ export default function TemplateLibrary() {
   }
 
   return (
-    <div class="min-h-0 flex-1 overflow-auto">
-      <div class="mx-auto w-full max-w-4xl px-4 py-10">
+    <div class="cadence-page min-h-0 flex-1 overflow-auto">
+      <div class="mx-auto w-full max-w-5xl px-5 py-10">
         <div class="flex items-start justify-between gap-4">
           <div>
-            <div class="text-24-semibold text-text-strong">提示词模板库</div>
-            <div class="mt-1 text-14-regular text-text-weak">内置常用模板，后续会支持自定义与分类管理。</div>
+            <div class="cadence-title text-24-semibold text-text-strong">提示词模板库</div>
+            <div class="mt-1 text-14-regular text-text-weak">内置常用模板，后续支持自定义与分类管理。</div>
           </div>
           <div class="flex gap-2">
             <Button size="large" variant="secondary" onClick={() => navigate("/chat")}>
@@ -58,4 +58,3 @@ export default function TemplateLibrary() {
     </div>
   )
 }
-

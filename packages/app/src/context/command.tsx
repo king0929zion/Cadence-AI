@@ -98,17 +98,17 @@ export function formatKeybind(config: string): string {
   const kb = keybinds[0]
   const parts: string[] = []
 
-  if (kb.ctrl) parts.push(IS_MAC ? "⌃" : "Ctrl")
-  if (kb.alt) parts.push(IS_MAC ? "⌥" : "Alt")
-  if (kb.shift) parts.push(IS_MAC ? "⇧" : "Shift")
-  if (kb.meta) parts.push(IS_MAC ? "⌘" : "Meta")
+  if (kb.ctrl) parts.push("Ctrl")
+  if (kb.alt) parts.push(IS_MAC ? "Opt" : "Alt")
+  if (kb.shift) parts.push("Shift")
+  if (kb.meta) parts.push(IS_MAC ? "Cmd" : "Meta")
 
   if (kb.key) {
     const displayKey = kb.key.length === 1 ? kb.key.toUpperCase() : kb.key.charAt(0).toUpperCase() + kb.key.slice(1)
     parts.push(displayKey)
   }
 
-  return IS_MAC ? parts.join("") : parts.join("+")
+  return parts.join("+")
 }
 
 export const { use: useCommand, provider: CommandProvider } = createSimpleContext({

@@ -1,4 +1,4 @@
-import { Button } from "@opencode-ai/ui/button"
+﻿import { Button } from "@opencode-ai/ui/button"
 import { useServer } from "@/context/server"
 
 export function GeneralPanel() {
@@ -7,7 +7,7 @@ export function GeneralPanel() {
     <div class="flex flex-col gap-3">
       <div>
         <div class="text-14-medium text-text-strong">通用</div>
-        <div class="mt-1 text-12-regular text-text-weak">服务器与运行状态</div>
+        <div class="mt-1 text-12-regular text-text-weak">服务器与同步状态。</div>
       </div>
 
       <div class="rounded-md border border-border-weak-base bg-surface-raised-base/20 p-4 flex items-center justify-between gap-3">
@@ -22,4 +22,3 @@ export function GeneralPanel() {
     </div>
   )
 }
-

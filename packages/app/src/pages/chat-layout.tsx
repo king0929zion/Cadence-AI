@@ -1,4 +1,4 @@
-import { type ParentProps } from "solid-js"
+﻿import { type ParentProps } from "solid-js"
 import { useCommand } from "@/context/command"
 import { useLocation, useNavigate } from "@solidjs/router"
 import { CadenceSidebar } from "@/components/chat/sidebar"
@@ -12,7 +12,7 @@ export default function ChatLayout(props: ParentProps) {
     {
       id: "cadence.chat.home",
       title: "回到对话首页",
-      description: "打开对话首页",
+      description: "打开 Cadence 对话首页",
       category: "Cadence",
       slash: "chat",
       suggested: true,
@@ -46,7 +46,7 @@ export default function ChatLayout(props: ParentProps) {
   ])
 
   return (
-    <div class="size-full flex bg-surface-base text-text-strong">
+    <div class="size-full flex cadence-shell cadence-ambient">
       <CadenceSidebar />
       <main class="min-w-0 flex-1 flex flex-col">{props.children}</main>
     </div>

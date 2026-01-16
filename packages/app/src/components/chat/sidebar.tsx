@@ -1,4 +1,4 @@
-import { createMemo, For, Match, Show, Switch } from "solid-js"
+﻿import { createMemo, For, Match, Show, Switch } from "solid-js"
 import { createStore } from "solid-js/store"
 import { A, useLocation, useNavigate, useParams } from "@solidjs/router"
 import { Button } from "@opencode-ai/ui/button"
@@ -52,7 +52,7 @@ export function CadenceSidebar() {
     if (!workspace) return []
     const q = ui.query.trim().toLowerCase()
     if (!q) return workspace.session
-    return workspace.session.filter((s) => (s.title || "Untitled").toLowerCase().includes(q))
+    return workspace.session.filter((s) => (s.title || "未命名对话").toLowerCase().includes(q))
   })
 
   async function chooseProject() {
@@ -64,7 +64,7 @@ export function CadenceSidebar() {
 
     if (platform.openDirectoryPickerDialog && server.isLocal()) {
       const result = await platform.openDirectoryPickerDialog?.({
-        title: "Open project",
+        title: "打开项目",
         multiple: false,
       })
       resolve(result)
@@ -73,16 +73,16 @@ export function CadenceSidebar() {
     }
   }
 
-  const widthClass = createMemo(() => (ui.collapsed ? "w-[72px]" : "w-[280px]"))
+  const widthClass = createMemo(() => (ui.collapsed ? "w-[72px]" : "w-[288px]"))
 
   return (
-    <aside class={["shrink-0 border-r border-border-weak-base bg-surface-raised-base/40", widthClass()].join(" ")}>
-      <div class="h-12 px-2 flex items-center justify-between gap-2">
+    <aside class={["cadence-sidebar shrink-0", widthClass()].join(" ")}>
+      <div class="h-12 px-3 flex items-center justify-between gap-2">
         <button
           type="button"
           class="size-9 rounded-md hover:bg-surface-raised-base-hover flex items-center justify-center"
           onClick={() => setUi("collapsed", (v) => !v)}
-          aria-label="Toggle sidebar"
+          aria-label="切换侧边栏"
         >
           <Icon name="chevron-double-right" size="small" classList={{ "rotate-180": !ui.collapsed }} />
         </button>
@@ -103,7 +103,7 @@ export function CadenceSidebar() {
           onClick={chooseProject}
         >
           <Show when={!ui.collapsed} fallback={<Icon name="folder-add-left" size="small" />}>
-            新建对话
+            新对话
           </Show>
         </Button>
       </div>
@@ -113,11 +113,12 @@ export function CadenceSidebar() {
           {(item) => (
             <A
               href={item.href}
-              class="flex items-center gap-2 px-2 h-9 rounded-md text-13-medium text-text-strong hover:bg-surface-raised-base-hover"
+              class="cadence-nav-item flex items-center gap-2 px-2 h-9 rounded-md text-13-medium text-text-strong hover:bg-surface-raised-base-hover"
+              data-active={
+                location.pathname === item.href || location.pathname.startsWith(item.href + "/") ? "true" : "false"
+              }
               classList={{
                 "justify-center px-0": ui.collapsed,
-                "bg-surface-base-active":
-                  location.pathname === item.href || location.pathname.startsWith(item.href + "/"),
               }}
             >
               <Icon name={item.icon} size="small" />
@@ -203,4 +204,3 @@ export function CadenceSidebar() {
     </aside>
   )
 }
-

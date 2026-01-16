@@ -1,4 +1,4 @@
-import { For, createEffect, createMemo } from "solid-js"
+﻿import { For, createEffect, createMemo } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { useGlobalSync } from "@/context/global-sync"
 import { base64Encode } from "@opencode-ai/util/encode"
@@ -46,38 +46,43 @@ export default function ChatHome() {
   })
 
   return (
-    <div class="min-h-0 flex-1 overflow-auto">
-      <div class="mx-auto w-full max-w-3xl px-4 py-10">
-        <div class="flex items-start justify-between gap-4">
-          <div>
-            <div class="text-24-semibold text-text-strong">今天想做点什么？</div>
-            <div class="mt-1 text-14-regular text-text-weak">从对话开始，保留完整执行能力，但把重心放在日常使用。</div>
-          </div>
-          <div class="flex gap-2">
-            <Button
-              size="large"
-              onClick={() => {
-                const dir = recentDirectories()[0]
-                if (!dir) {
-                  navigate("/")
-                  return
-                }
-                navigate(`/chat/${base64Encode(dir)}/session`)
-              }}
-            >
-              <Icon name="bubble-5" size="small" />
-              新对话
-            </Button>
-            <Button size="large" variant="secondary" onClick={() => navigate("/templates")}>
-              <Icon name="dot-grid" size="small" />
-              模板库
-            </Button>
+    <div class="cadence-page min-h-0 flex-1 overflow-auto">
+      <div class="mx-auto w-full max-w-5xl px-5 py-10">
+        <div class="cadence-card cadence-card-strong p-6 md:p-8">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <div class="text-12-regular uppercase tracking-[0.2em] text-text-weak">Cadence</div>
+              <div class="mt-2 cadence-title text-24-semibold text-text-strong">今天想做点什么？</div>
+              <div class="mt-2 text-14-regular text-text-weak">
+                对话式 AI 助手，保留完整执行能力，把重点放在日常使用体验。
+              </div>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <Button
+                size="large"
+                onClick={() => {
+                  const dir = recentDirectories()[0]
+                  if (!dir) {
+                    navigate("/")
+                    return
+                  }
+                  navigate(`/chat/${base64Encode(dir)}/session`)
+                }}
+              >
+                <Icon name="bubble-5" size="small" />
+                新对话
+              </Button>
+              <Button size="large" variant="secondary" onClick={() => navigate("/templates")}>
+                <Icon name="dot-grid" size="small" />
+                模板库
+              </Button>
+            </div>
           </div>
         </div>
 
         <div class="mt-8">
           <div class="flex items-center justify-between">
-            <div class="text-14-medium text-text-strong">最近对话</div>
+            <div class="text-13-medium text-text-strong">最近对话</div>
             <Button variant="ghost" size="small" onClick={() => navigate("/")}>
               <Icon name="folder" size="small" />
               管理项目
@@ -90,12 +95,12 @@ export default function ChatHome() {
                 <Button
                   size="large"
                   variant="ghost"
-                  class="justify-between px-3 border border-border-weak-base bg-surface-raised-base/30 hover:bg-surface-raised-base-hover"
+                  class="cadence-list-item justify-between px-3"
                   onClick={() => navigate(`/chat/${base64Encode(row.directory)}/session/${row.session.id}`)}
                 >
                   <div class="min-w-0 flex flex-col items-start gap-0.5">
                     <div class="text-14-medium text-text-strong truncate max-w-full">
-                      {row.session.title || "Untitled"}
+                      {row.session.title || "未命名对话"}
                     </div>
                     <div class="text-12-regular text-text-weak truncate max-w-full">{getFilename(row.directory)}</div>
                   </div>
@@ -107,12 +112,12 @@ export default function ChatHome() {
             </For>
           </div>
 
-          <div class="mt-6 rounded-md border border-border-weak-base bg-surface-raised-base/20 p-4">
+          <div class="mt-6 cadence-card p-4">
             <div class="text-14-medium text-text-strong">快捷入口</div>
             <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
               <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/templates")}>
                 <Icon name="dot-grid" size="small" />
-                写作/翻译/总结模板
+                写作 / 翻译 / 总结模板
               </Button>
               <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/settings")}>
                 <Icon name="settings-gear" size="small" />

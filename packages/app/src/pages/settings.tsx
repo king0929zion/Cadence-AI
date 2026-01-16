@@ -1,4 +1,4 @@
-import { createStore } from "solid-js/store"
+﻿import { createStore } from "solid-js/store"
 import { Match, Switch } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { Button } from "@opencode-ai/ui/button"
@@ -14,11 +14,11 @@ export default function Settings() {
   const [store, setStore] = createStore<{ tab: Tab }>({ tab: "theme" })
 
   return (
-    <div class="min-h-0 flex-1 overflow-auto">
-      <div class="mx-auto w-full max-w-4xl px-4 py-10">
+    <div class="cadence-page min-h-0 flex-1 overflow-auto">
+      <div class="mx-auto w-full max-w-5xl px-5 py-10">
         <div class="flex items-start justify-between gap-4">
           <div>
-            <div class="text-24-semibold text-text-strong">设置</div>
+            <div class="cadence-title text-24-semibold text-text-strong">设置</div>
             <div class="mt-1 text-14-regular text-text-weak">主题、快捷键与通用偏好。</div>
           </div>
           <Button size="large" variant="secondary" onClick={() => navigate("/chat")}>

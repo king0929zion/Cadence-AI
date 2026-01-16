@@ -96,12 +96,12 @@ const CODE_PLACEHOLDERS = [
 ]
 
 const CADENCE_PLACEHOLDERS = [
-  "帮我总结一段文字，并给出行动项",
+  "帮我总结这段文字，并给出行动项",
   "把这段内容翻译成英文（保留格式）",
-  "写一封专业且简洁的邮件",
-  "整理会议纪要：结论/决定/待办",
+  "写一封简洁专业的邮件",
+  "整理会议纪要：结论 / 决定 / 待办",
   "给我一个利弊分析与建议",
-  "生成一个 7 天计划/清单",
+  "生成一个 7 天计划清单",
   "把内容改写得更清晰、更有条理",
 ]
 
@@ -1443,6 +1443,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
         onSubmit={handleSubmit}
         classList={{
           "group/prompt-input": true,
+          "cadence-input-shell": true,
           "bg-surface-raised-stronger-non-alpha shadow-xs-border relative": true,
           "rounded-md overflow-clip focus-within:shadow-xs-border": true,
           "border-icon-info-active border-dashed": store.dragging,
@@ -1453,7 +1454,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
           <div class="absolute inset-0 z-10 flex items-center justify-center bg-surface-raised-stronger-non-alpha/90 pointer-events-none">
             <div class="flex flex-col items-center gap-2 text-text-weak">
               <Icon name="photo" class="size-8" />
-              <span class="text-14-regular">Drop images or PDFs here</span>
+              <span class="text-14-regular">拖拽图片或 PDF 到这里</span>
             </div>
           </div>
         </Show>
@@ -1575,12 +1576,12 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
               "font-mono!": store.mode === "shell",
             }}
           />
-          <Show when={!prompt.dirty()}>
-            <div class="absolute top-0 inset-x-0 px-5 py-3 pr-12 text-14-regular text-text-weak pointer-events-none whitespace-nowrap truncate">
-              {store.mode === "shell"
-                ? isCadenceMode()
-                  ? "输入 Shell 命令…"
-                  : "Enter shell command..."
+        <Show when={!prompt.dirty()}>
+          <div class="cadence-input-placeholder absolute top-0 inset-x-0 px-5 py-3 pr-12 text-14-regular text-text-weak pointer-events-none whitespace-nowrap truncate">
+            {store.mode === "shell"
+              ? isCadenceMode()
+                ? "输入 Shell 命令…"
+                : "Enter shell command..."
                 : isCadenceMode()
                   ? `随便聊聊… "${placeholders()[store.placeholder % placeholders().length]}"`
                   : `Ask anything... "${placeholders()[store.placeholder % placeholders().length]}"`}

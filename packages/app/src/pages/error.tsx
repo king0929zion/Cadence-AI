@@ -93,7 +93,7 @@ function formatInitError(error: InitError): string {
     case "ConfigInvalidError": {
       const issues = Array.isArray(data.issues)
         ? data.issues.map(
-            (issue: { message: string; path: string[] }) => "↳ " + issue.message + " " + issue.path.join("."),
+            (issue: { message: string; path: string[] }) => "- " + issue.message + " " + issue.path.join("."),
           )
         : []
       const message = typeof data.message === "string" ? data.message : ""
@@ -113,14 +113,14 @@ function formatErrorChain(error: unknown, depth = 0, parentMessage?: string): st
   if (isInitError(error)) {
     const message = formatInitError(error)
     if (depth > 0 && parentMessage === message) return ""
-    const indent = depth > 0 ? `\n${"─".repeat(40)}\nCaused by:\n` : ""
+    const indent = depth > 0 ? `\n${"-".repeat(40)}\nCaused by:\n` : ""
     return indent + `${error.name}\n${message}`
   }
 
   if (error instanceof Error) {
     const isDuplicate = depth > 0 && parentMessage === error.message
     const parts: string[] = []
-    const indent = depth > 0 ? `\n${"─".repeat(40)}\nCaused by:\n` : ""
+    const indent = depth > 0 ? `\n${"-".repeat(40)}\nCaused by:\n` : ""
 
     const header = `${error.name}${error.message ? `: ${error.message}` : ""}`
     const stack = error.stack?.trim()
@@ -164,11 +164,11 @@ function formatErrorChain(error: unknown, depth = 0, parentMessage?: string): st
 
   if (typeof error === "string") {
     if (depth > 0 && parentMessage === error) return ""
-    const indent = depth > 0 ? `\n${"─".repeat(40)}\nCaused by:\n` : ""
+    const indent = depth > 0 ? `\n${"-".repeat(40)}\nCaused by:\n` : ""
     return indent + error
   }
 
-  const indent = depth > 0 ? `\n${"─".repeat(40)}\nCaused by:\n` : ""
+  const indent = depth > 0 ? `\n${"-".repeat(40)}\nCaused by:\n` : ""
   return indent + safeJson(error)
 }
 

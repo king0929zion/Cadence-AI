@@ -1,6 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap");
 @import "@opencode-ai/ui/styles/tailwind";
 
 :root {
+  --cadence-font: "IBM Plex Sans", "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  --cadence-display: "Fraunces", "Times New Roman", serif;
+  --cadence-bg: #f7f2ec;
+  --cadence-bg-strong: #efe7dc;
+  --cadence-panel: rgba(255, 255, 255, 0.78);
+  --cadence-panel-strong: rgba(255, 255, 255, 0.92);
+  --cadence-border: rgba(122, 97, 74, 0.2);
+  --cadence-border-strong: rgba(122, 97, 74, 0.35);
+  --cadence-text: #2c231c;
+  --cadence-muted: #6f6258;
+  --cadence-accent: #d07b4f;
+  --cadence-accent-strong: #bf6a3d;
+  --cadence-shadow: 0 10px 32px rgba(35, 25, 18, 0.08), 0 2px 8px rgba(35, 25, 18, 0.05);
+
   a {
     cursor: default;
   }
@@ -8,4 +23,127 @@
 
 *[data-tauri-drag-region] {
   app-region: drag;
+}
+
+.cadence-shell,
+.cadence-page {
+  font-family: var(--cadence-font);
+  color: var(--cadence-text);
+  background: var(--cadence-bg);
+}
+
+.cadence-ambient {
+  position: relative;
+}
+
+.cadence-ambient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 50% at 0% 0%, rgba(208, 123, 79, 0.12), transparent 60%),
+    radial-gradient(50% 40% at 100% 0%, rgba(122, 97, 74, 0.12), transparent 65%),
+    radial-gradient(70% 60% at 50% 100%, rgba(122, 97, 74, 0.08), transparent 65%);
+  opacity: 0.8;
+  z-index: 0;
+}
+
+.cadence-ambient > * {
+  position: relative;
+  z-index: 1;
+}
+
+.cadence-title {
+  font-family: var(--cadence-display);
+  letter-spacing: -0.01em;
+}
+
+.cadence-card {
+  background: var(--cadence-panel);
+  border: 1px solid var(--cadence-border);
+  border-radius: 18px;
+  box-shadow: var(--cadence-shadow);
+  backdrop-filter: blur(8px);
+}
+
+.cadence-card-strong {
+  background: var(--cadence-panel-strong);
+  border-color: var(--cadence-border-strong);
+}
+
+.cadence-list-item {
+  border: 1px solid var(--cadence-border);
+  background: var(--cadence-panel);
+  border-radius: 14px;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.cadence-list-item:hover {
+  background: var(--cadence-panel-strong);
+  border-color: var(--cadence-border-strong);
+  transform: translateY(-1px);
+}
+
+.cadence-chip {
+  background: var(--cadence-panel-strong);
+  border: 1px solid var(--cadence-border);
+  border-radius: 999px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.cadence-chip:hover {
+  background: var(--cadence-panel-strong);
+  border-color: var(--cadence-border-strong);
+}
+
+.cadence-sidebar {
+  background: linear-gradient(180deg, var(--cadence-panel), var(--cadence-bg));
+  border-right: 1px solid var(--cadence-border);
+  backdrop-filter: blur(10px);
+}
+
+.cadence-nav-item[data-active="true"] {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--cadence-border);
+}
+
+.cadence-input-shell {
+  background: var(--cadence-panel-strong);
+  border: 1px solid var(--cadence-border-strong);
+  border-radius: 20px;
+  box-shadow: var(--cadence-shadow);
+}
+
+.cadence-input-placeholder {
+  color: var(--cadence-muted);
+}
+
+.cadence-gradient {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--cadence-bg) 0%, transparent) 0%,
+    color-mix(in srgb, var(--cadence-bg) 85%, transparent) 40%,
+    var(--cadence-bg) 100%
+  );
+}
+
+.cadence-session-header {
+  background: var(--cadence-panel);
+  border-bottom: 1px solid var(--cadence-border);
+  backdrop-filter: blur(10px);
+}
+
+html[data-theme="dark"] {
+  --cadence-bg: #191613;
+  --cadence-bg-strong: #221d18;
+  --cadence-panel: rgba(35, 30, 26, 0.82);
+  --cadence-panel-strong: rgba(42, 36, 31, 0.92);
+  --cadence-border: rgba(255, 255, 255, 0.12);
+  --cadence-border-strong: rgba(255, 255, 255, 0.22);
+  --cadence-text: #f3ede6;
+  --cadence-muted: #b9aca1;
+  --cadence-accent: #d08c61;
+  --cadence-accent-strong: #e09b73;
+  --cadence-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.35);
 }

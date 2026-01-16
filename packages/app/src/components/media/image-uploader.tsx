@@ -1,4 +1,4 @@
-import { Show, createSignal } from "solid-js"
+﻿import { Show, createSignal } from "solid-js"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 
