@@ -1182,9 +1182,10 @@ export namespace Config {
       })
     }
 
-    const parsed = Info.safeParse(data)
+    const { data: migratedData, didMigrate } = migrateLegacyConfig(data)
+    const parsed = Info.safeParse(migratedData)
     if (parsed.success) {
-      if (!parsed.data.$schema) {
+      if (!parsed.data.$schema || didMigrate) {
         parsed.data.$schema = "https://opencode.ai/config.json"
         await Bun.write(configFilepath, JSON.stringify(parsed.data, null, 2)).catch(() => {})
       }
@@ -1204,6 +1205,50 @@ export namespace Config {
       path: configFilepath,
       issues: parsed.error.issues,
     })
+  }
+
+  function migrateLegacyConfig(input: unknown): { data: unknown; didMigrate: boolean } {
+    if (typeof input !== "object" || input === null || Array.isArray(input)) {
+      return { data: input, didMigrate: false }
+    }
+
+    const data: Record<string, any> = { ...(input as Record<string, any>) }
+    let didMigrate = false
+
+    // Backwards compatibility: older configs used pluralized keys at the top-level.
+    // - providers -> provider
+    // - agents -> agent
+    // - models -> (no longer supported at top-level; attempt best-effort migration, otherwise drop)
+    if (data.providers && typeof data.providers === "object" && !Array.isArray(data.providers)) {
+      data.provider = mergeDeep(data.provider ?? {}, data.providers)
+      delete data.providers
+      didMigrate = true
+    }
+
+    if (data.agents && typeof data.agents === "object" && !Array.isArray(data.agents)) {
+      data.agent = mergeDeep(data.agent ?? {}, data.agents)
+      delete data.agents
+      didMigrate = true
+    }
+
+    if (data.models && typeof data.models === "object" && !Array.isArray(data.models)) {
+      // Common legacy shape: { default: "provider/model", small: "provider/model" }
+      if (typeof data.models.default === "string" && !data.model) {
+        data.model = data.models.default
+        didMigrate = true
+      }
+      if (typeof data.models.small === "string" && !data.small_model) {
+        data.small_model = data.models.small
+        didMigrate = true
+      }
+      delete data.models
+      didMigrate = true
+    } else if ("models" in data) {
+      delete data.models
+      didMigrate = true
+    }
+
+    return { data, didMigrate }
   }
   export const JsonError = NamedError.create(
     "ConfigJsonError",

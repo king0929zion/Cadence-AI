@@ -1,4 +1,5 @@
 import { ConfigMarkdown } from "@/config/markdown"
+import { NamedError } from "@opencode-ai/util/error"
 import { Config } from "../config/config"
 import { MCP } from "../mcp"
 import { Provider } from "../provider/provider"
@@ -34,10 +35,16 @@ export function FormatError(input: unknown) {
     return [
       `Configuration is invalid${input.data.path && input.data.path !== "config" ? ` at ${input.data.path}` : ""}` +
         (input.data.message ? `: ${input.data.message}` : ""),
-      ...(input.data.issues?.map((issue) => "↳ " + issue.message + " " + issue.path.join(".")) ?? []),
+      ...(input.data.issues?.map((issue) => `↳ ${issue.message} ${issue.path.join(".")}`) ?? []),
     ].join("\n")
 
   if (UI.CancelledError.isInstance(input)) return ""
+
+  if (NamedError.isNamedError(input)) {
+    try {
+      return JSON.stringify(input, null, 2)
+    } catch {}
+  }
 }
 
 export function FormatUnknownError(input: unknown): string {
