@@ -55,7 +55,7 @@ import { createOpencodeClient, type Message, type Part } from "@opencode-ai/sdk/
 import { Binary } from "@opencode-ai/util/binary"
 import { showToast } from "@opencode-ai/ui/toast"
 import { base64Encode } from "@opencode-ai/util/encode"
-import { useTemplate } from "@/context/template"
+import { useComposer } from "@/context/composer"
 
 const ACCEPTED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/webp"]
 const ACCEPTED_FILE_TYPES = [...ACCEPTED_IMAGE_TYPES, "application/pdf"]
@@ -95,16 +95,6 @@ const CODE_PLACEHOLDERS = [
   "How do environment variables work here?",
 ]
 
-const CADENCE_PLACEHOLDERS_MOJIBAKE = [
-  "帮我把这段文字总结成要点，并给出行动项",
-  "把这段内容翻译成英文（保留格式）",
-  "写一封简洁专业的邮件",
-  "整理会议纪要：结论 / 决定 / 待办",
-  "给我一个利弊分析与建议",
-  "生成一个 7 天计划清单",
-  "把内容改写得更清晰、更有条理",
-]
-
 const CADENCE_PLACEHOLDERS = [
   "\u5e2e\u6211\u628a\u8fd9\u6bb5\u6587\u5b57\u603b\u7ed3\u6210\u8981\u70b9\uff0c\u5e76\u7ed9\u51fa\u884c\u52a8\u9879",
   "\u628a\u8fd9\u6bb5\u5185\u5bb9\u7ffb\u8bd1\u6210\u82f1\u6587\uff08\u4fdd\u7559\u683c\u5f0f\uff09",
@@ -134,7 +124,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
   const local = useLocal()
   const files = useFile()
   const prompt = usePrompt()
-  const templates = useTemplate()
+  const composer = useComposer()
   const layout = useLayout()
   const params = useParams()
   const dialog = useDialog()
@@ -214,6 +204,21 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
     dragging: false,
     mode: "normal",
     applyingHistory: false,
+  })
+
+  const placeholderText = createMemo(() => {
+    const list = placeholders()
+    const sample = list[store.placeholder % Math.max(list.length, 1)] ?? ""
+
+    if (store.mode === "shell") {
+      return isCadenceMode() ? "\u8f93\u5165 Shell \u547d\u4ee4\u2026" : "Enter shell command..."
+    }
+
+    if (isCadenceMode()) {
+      return `\u968f\u4fbf\u804a\u804a\u2026 \u201c${sample}\u201d`
+    }
+
+    return `Ask anything... "${sample}"`
   })
 
   const MAX_HISTORY = 100
@@ -807,11 +812,11 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
 
   createEffect(
     on(
-      () => templates.pendingInsert(),
+      () => composer.pendingInsert(),
       (pending) => {
         if (!pending) return
         requestAnimationFrame(() => {
-          const content = templates.consumePendingInsert()
+          const content = composer.consumePendingInsert()
           if (!content) return
           editorRef.focus()
           const position = promptLength(prompt.current())
@@ -1598,13 +1603,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
           />
         <Show when={!prompt.dirty()}>
           <div class="cadence-input-placeholder absolute top-0 inset-x-0 px-5 py-3 pr-12 text-14-regular text-text-weak pointer-events-none whitespace-nowrap truncate">
-            {store.mode === "shell"
-              ? isCadenceMode()
-                ? "输入 Shell 命令…"
-                : "Enter shell command..."
-                : isCadenceMode()
-                  ? `随便聊聊… "${placeholders()[store.placeholder % placeholders().length]}"`
-                  : `Ask anything... "${placeholders()[store.placeholder % placeholders().length]}"`}
+            {placeholderText()}
             </div>
           </Show>
         </div>
@@ -1711,14 +1710,14 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
               <SessionContextUsage />
               <Show when={store.mode === "normal"}>
                 <Show when={isCadenceMode()}>
-                  <Tooltip placement="top" value="模板">
+                  <Tooltip placement="top" value="工具">
                     <Button
                       type="button"
                       variant="ghost"
                       class="size-6"
-                      onClick={() => navigate(`/chat/templates?return=${encodeURIComponent(location.pathname)}`)}
+                      onClick={() => navigate(`/chat/tools?return=${encodeURIComponent(location.pathname)}`)}
                     >
-                      <Icon name="dot-grid" class="size-4.5" />
+                      <Icon name="bullet-list" class="size-4.5" />
                     </Button>
                   </Tooltip>
                 </Show>

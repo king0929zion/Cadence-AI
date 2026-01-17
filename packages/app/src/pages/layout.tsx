@@ -7,9 +7,9 @@ function isCadenceChatRoute(pathname: string) {
   return (
     pathname === "/chat" ||
     pathname.startsWith("/chat/") ||
-    pathname === "/templates" ||
     pathname === "/settings" ||
-    pathname === "/chat/templates" ||
+    pathname === "/templates" ||
+    pathname === "/chat/tools" ||
     pathname === "/chat/settings"
   )
 }

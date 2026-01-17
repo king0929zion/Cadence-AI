@@ -1,6 +1,7 @@
 ﻿import { For, createEffect, createMemo } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { useGlobalSync } from "@/context/global-sync"
+import { useConversation } from "@/context/conversation"
 import { base64Encode } from "@opencode-ai/util/encode"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
@@ -15,6 +16,7 @@ type SessionRow = {
 
 export default function ChatHome() {
   const sync = useGlobalSync()
+  const conversation = useConversation()
   const navigate = useNavigate()
 
   const recentDirectories = createMemo(() => {
@@ -56,6 +58,17 @@ export default function ChatHome() {
               <div class="mt-2 text-14-regular text-text-weak">
                 对话式 AI 助手，保留完整执行能力，把重点放在日常使用体验。
               </div>
+              <div class="mt-4 flex flex-wrap gap-2">
+                <div class="cadence-chip h-8 px-3 text-12-medium text-text-weak">
+                  项目 {sync.data.project.length}
+                </div>
+                <div class="cadence-chip h-8 px-3 text-12-medium text-text-weak">
+                  文件夹 {conversation.folders().length}
+                </div>
+                <div class="cadence-chip h-8 px-3 text-12-medium text-text-weak">
+                  置顶 {conversation.meta().filter((m) => m.pinned).length}
+                </div>
+              </div>
             </div>
             <div class="flex flex-wrap gap-2">
               <Button
@@ -72,9 +85,9 @@ export default function ChatHome() {
                 <Icon name="bubble-5" size="small" />
                 新对话
               </Button>
-              <Button size="large" variant="secondary" onClick={() => navigate("/chat/templates")}>
-                <Icon name="dot-grid" size="small" />
-                模板库
+              <Button size="large" variant="secondary" onClick={() => navigate("/chat/tools")}>
+                <Icon name="bullet-list" size="small" />
+                工具中心
               </Button>
             </div>
           </div>
@@ -115,9 +128,9 @@ export default function ChatHome() {
           <div class="mt-6 cadence-card p-4">
             <div class="text-14-medium text-text-strong">快捷入口</div>
             <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
-              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/chat/templates")}>
-                <Icon name="dot-grid" size="small" />
-                写作 / 翻译 / 总结模板
+              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/chat/tools")}>
+                <Icon name="bullet-list" size="small" />
+                工具与会话管理
               </Button>
               <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/chat/settings")}>
                 <Icon name="settings-gear" size="small" />

@@ -25,7 +25,7 @@ import Layout from "@/pages/layout"
 import DirectoryLayout from "@/pages/directory-layout"
 import ChatDirectoryLayout from "@/pages/chat-directory-layout"
 import { ConversationProvider } from "@/context/conversation"
-import { TemplateProvider } from "@/context/template"
+import { ComposerProvider } from "@/context/composer"
 import { ErrorPage } from "./pages/error"
 import { iife } from "@opencode-ai/util/iife"
 import { Suspense } from "solid-js"
@@ -34,7 +34,7 @@ const Home = lazy(() => import("@/pages/home"))
 const Session = lazy(() => import("@/pages/session"))
 const ChatHome = lazy(() => import("@/pages/chat-home"))
 const ChatSession = lazy(() => import("@/pages/chat-session"))
-const TemplateLibrary = lazy(() => import("@/pages/template-library"))
+const ChatTools = lazy(() => import("@/pages/chat-tools"))
 const Settings = lazy(() => import("@/pages/settings"))
 const Loading = () => <div class="size-full flex items-center justify-center text-text-weak">Loading...</div>
 
@@ -90,7 +90,7 @@ export function AppInterface(props: { defaultUrl?: string }) {
             <Router
               root={(props) => (
                 <PermissionProvider>
-                  <TemplateProvider>
+                  <ComposerProvider>
                     <ConversationProvider>
                       <LayoutProvider>
                         <NotificationProvider>
@@ -100,7 +100,7 @@ export function AppInterface(props: { defaultUrl?: string }) {
                         </NotificationProvider>
                       </LayoutProvider>
                     </ConversationProvider>
-                  </TemplateProvider>
+                  </ComposerProvider>
                 </PermissionProvider>
               )}
             >
@@ -138,10 +138,10 @@ export function AppInterface(props: { defaultUrl?: string }) {
                 )}
               />
               <Route
-                path="/chat/templates"
+                path="/chat/tools"
                 component={() => (
                   <Suspense fallback={<Loading />}>
-                    <TemplateLibrary />
+                    <ChatTools />
                   </Suspense>
                 )}
               />
@@ -172,7 +172,7 @@ export function AppInterface(props: { defaultUrl?: string }) {
               </Route>
               <Route
                 path="/templates"
-                component={() => <Navigate href="/chat/templates" />}
+                component={() => <Navigate href="/chat" />}
               />
               <Route
                 path="/settings"

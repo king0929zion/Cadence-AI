@@ -59,7 +59,7 @@ export function CadenceSidebar() {
     () =>
       [
         { label: "对话", href: "/chat", icon: "bubble-5" as const },
-        { label: "模板", href: "/chat/templates", icon: "dot-grid" as const },
+        { label: "工具", href: "/chat/tools", icon: "bullet-list" as const },
         { label: "设置", href: "/chat/settings", icon: "settings-gear" as const },
       ] as const,
   )
