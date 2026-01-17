@@ -7,6 +7,7 @@ import { useGlobalSync } from "@/context/global-sync"
 import { base64Decode, base64Encode } from "@opencode-ai/util/encode"
 import { getFilename } from "@opencode-ai/util/path"
 import { useServer } from "@/context/server"
+import { useConversation } from "@/context/conversation"
 
 function extractDirFromPath(pathname: string): string | undefined {
   const match = pathname.match(/^\/chat\/([^/]+)(?:\/|$)/)
@@ -24,6 +25,7 @@ export default function ChatTools() {
   const command = useCommand()
   const sync = useGlobalSync()
   const server = useServer()
+  const conversation = useConversation()
 
   const returnTo = createMemo(() => {
     const params = new URLSearchParams(location.search ?? "")
@@ -34,6 +36,33 @@ export default function ChatTools() {
 
   const activeDirectory = createMemo(() => extractDirFromPath(returnTo()) ?? sync.data.project.at(0)?.worktree)
   const activeDirEncoded = createMemo(() => (activeDirectory() ? base64Encode(activeDirectory()!) : undefined))
+  const activeWorkspace = createMemo(() => {
+    const dir = activeDirectory()
+    if (!dir) return
+    return sync.child(dir)[0]
+  })
+
+  createEffect(() => {
+    const dir = activeDirectory()
+    if (!dir) return
+    sync.child(dir)
+  })
+
+  const workspaceStats = createMemo(() => {
+    const dir = activeDirectory()
+    const workspace = activeWorkspace()
+    if (!dir || !workspace) return
+    const sessionCount = workspace.session.length
+    const pinnedCount = workspace.session.filter(
+      (s) => !!conversation.metaFor({ directory: dir, sessionId: s.id })?.pinned,
+    ).length
+    const folderCount = new Set(
+      workspace.session
+        .map((s) => conversation.metaFor({ directory: dir, sessionId: s.id })?.folderId)
+        .filter((x): x is string => !!x),
+    ).size
+    return { sessionCount, pinnedCount, folderCount }
+  })
 
   const [search, setSearch] = createSignal("")
 
@@ -149,6 +178,40 @@ export default function ChatTools() {
             )}
           </Show>
         </div>
+
+        <Show when={workspaceStats()}>
+          {(stats) => (
+            <div class="mt-6 cadence-card p-5">
+              <div class="flex items-center justify-between gap-4">
+                <div class="min-w-0">
+                  <div class="text-14-medium text-text-strong">项目概览</div>
+                  <div class="mt-1 text-12-regular text-text-weak">当前项目的会话与组织信息。</div>
+                </div>
+                <div class="flex gap-2">
+                  <Button variant="secondary" onClick={() => navigate(`/chat/search?return=${encodeURIComponent(returnTo())}`)}>
+                    <Icon name="magnifying-glass" size="small" />
+                    去搜索
+                  </Button>
+                </div>
+              </div>
+
+              <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div class="cadence-list-item px-3 py-3">
+                  <div class="text-12-regular text-text-weak">会话</div>
+                  <div class="mt-1 text-13-medium text-text-strong">{stats().sessionCount}</div>
+                </div>
+                <div class="cadence-list-item px-3 py-3">
+                  <div class="text-12-regular text-text-weak">置顶</div>
+                  <div class="mt-1 text-13-medium text-text-strong">{stats().pinnedCount}</div>
+                </div>
+                <div class="cadence-list-item px-3 py-3">
+                  <div class="text-12-regular text-text-weak">文件夹</div>
+                  <div class="mt-1 text-13-medium text-text-strong">{stats().folderCount}</div>
+                </div>
+              </div>
+            </div>
+          )}
+        </Show>
 
         <div class="mt-6">
           <div class="text-14-medium text-text-strong">快捷入口</div>

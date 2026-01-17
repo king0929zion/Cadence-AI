@@ -133,10 +133,10 @@ export function DialogSelectFile() {
   })
 
   return (
-    <Dialog title="Search">
+    <Dialog title="搜索">
       <List
-        search={{ placeholder: "Search files and commands", autofocus: true }}
-        emptyMessage="No results found"
+        search={{ placeholder: "搜索文件和命令", autofocus: true }}
+        emptyMessage="没有结果"
         items={items}
         key={(item) => item.id}
         filterKeys={["title", "description", "category"]}

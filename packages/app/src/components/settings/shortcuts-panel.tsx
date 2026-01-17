@@ -3,6 +3,7 @@
 const SHORTCUTS = [
   { action: "新建对话", keys: ["Ctrl/Cmd", "N"] },
   { action: "搜索对话", keys: ["Ctrl/Cmd", "F"] },
+  { action: "全局搜索", keys: ["Ctrl/Cmd", "Shift", "F"] },
   { action: "打开工具中心", keys: ["Ctrl/Cmd", "T"] },
   { action: "发送消息", keys: ["Ctrl/Cmd", "Enter"] },
   { action: "打开设置", keys: ["Ctrl/Cmd", ","] },

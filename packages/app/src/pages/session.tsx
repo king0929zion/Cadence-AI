@@ -428,7 +428,7 @@ export default function Page() {
     {
       id: "file.open",
       title: "Open file",
-      description: "Search files and commands",
+      description: "搜索文件和命令",
       category: "File",
       keybind: "mod+p",
       slash: "open",
@@ -1596,7 +1596,7 @@ export default function Page() {
                               />
                             </Match>
                             <Match when={state()?.loading}>
-                              <div class="px-6 py-4 text-text-weak">Loading...</div>
+                              <div class="px-6 py-4 text-text-weak">加载中…</div>
                             </Match>
                             <Match when={state()?.error}>
                               {(err) => <div class="px-6 py-4 text-text-weak">{err()}</div>}
@@ -1652,7 +1652,7 @@ export default function Page() {
                     )}
                   </For>
                   <div class="flex-1" />
-                  <div class="text-text-weak pr-2">Loading...</div>
+                  <div class="text-text-weak pr-2">加载中…</div>
                 </div>
                 <div class="flex-1 flex items-center justify-center text-text-weak">Loading terminal...</div>
               </div>

@@ -59,7 +59,7 @@ export function SessionHeader() {
             >
               <div class="flex items-center gap-2">
                 <Icon name="magnifying-glass" size="normal" class="icon-base" />
-                <span class="flex-1 min-w-0 text-14-regular text-text-weak truncate">Search {name()}</span>
+                <span class="flex-1 min-w-0 text-14-regular text-text-weak truncate">搜索 {name()}</span>
               </div>
 
               <Show when={hotkey()}>

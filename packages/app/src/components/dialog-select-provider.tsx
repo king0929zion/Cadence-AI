@@ -13,22 +13,22 @@ export const DialogSelectProvider: Component = () => {
   const providers = useProviders()
 
   return (
-    <Dialog title="Connect provider">
+    <Dialog title="连接提供商">
       <List
-        search={{ placeholder: "Search providers", autofocus: true }}
+        search={{ placeholder: "搜索提供商", autofocus: true }}
         activeIcon="plus-small"
         key={(x) => x?.id}
         items={providers.all}
         filterKeys={["id", "name"]}
-        groupBy={(x) => (popularProviders.includes(x.id) ? "Popular" : "Other")}
+        groupBy={(x) => (popularProviders.includes(x.id) ? "热门" : "其他")}
         sortBy={(a, b) => {
           if (popularProviders.includes(a.id) && popularProviders.includes(b.id))
             return popularProviders.indexOf(a.id) - popularProviders.indexOf(b.id)
           return a.name.localeCompare(b.name)
         }}
         sortGroupsBy={(a, b) => {
-          if (a.category === "Popular" && b.category !== "Popular") return -1
-          if (b.category === "Popular" && a.category !== "Popular") return 1
+          if (a.category === "热门" && b.category !== "热门") return -1
+          if (b.category === "热门" && a.category !== "热门") return 1
           return 0
         }}
         onSelect={(x) => {
@@ -41,10 +41,10 @@ export const DialogSelectProvider: Component = () => {
             <ProviderIcon data-slot="list-item-extra-icon" id={i.id as IconName} />
             <span>{i.name}</span>
             <Show when={i.id === "opencode"}>
-              <Tag>Recommended</Tag>
+              <Tag>推荐</Tag>
             </Show>
             <Show when={i.id === "anthropic"}>
-              <div class="text-14-regular text-text-weak">Connect with Claude Pro/Max or API key</div>
+              <div class="text-14-regular text-text-weak">可使用 Claude Pro/Max 或 API Key 连接</div>
             </Show>
           </div>
         )}

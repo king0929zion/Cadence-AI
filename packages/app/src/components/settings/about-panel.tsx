@@ -11,6 +11,28 @@ function buildConfigPath(home?: string) {
   return `${home}${sep}.config${sep}opencode${sep}opencode.json`
 }
 
+async function copyToClipboard(text: string) {
+  try {
+    await navigator.clipboard.writeText(text)
+    return true
+  } catch {
+    try {
+      const el = document.createElement("textarea")
+      el.value = text
+      el.style.position = "fixed"
+      el.style.left = "-9999px"
+      document.body.appendChild(el)
+      el.focus()
+      el.select()
+      const ok = document.execCommand("copy")
+      document.body.removeChild(el)
+      return ok
+    } catch {
+      return false
+    }
+  }
+}
+
 export function AboutPanel() {
   const platform = usePlatform()
   const server = useServer()
@@ -144,6 +166,18 @@ export function AboutPanel() {
         <div class="text-14-medium text-text-strong">配置文件</div>
         <div class="mt-1 text-12-regular text-text-weak">
           全局配置位于：<span class="font-mono">{configPath()}</span>
+        </div>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <Button
+            variant="secondary"
+            onClick={async () => {
+              const ok = await copyToClipboard(configPath())
+              showToast({ title: ok ? "已复制路径" : "复制失败", description: ok ? undefined : "当前环境不支持剪贴板写入。" })
+            }}
+          >
+            <Icon name="copy" size="small" />
+            复制路径
+          </Button>
         </div>
         <div class="mt-2 text-12-regular text-text-weak">
           兼容提示：旧配置里若存在 <span class="font-mono">providers / agents / models</span> 等字段，Cadence 会自动迁移/忽略，不再阻塞启动。

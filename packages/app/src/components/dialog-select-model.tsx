@@ -25,14 +25,14 @@ const ModelList: Component<{
   )
 
   return (
-    <List
-      class={`flex-1 min-h-0 [&_[data-slot=list-scroll]]:flex-1 [&_[data-slot=list-scroll]]:min-h-0 ${props.class ?? ""}`}
-      search={{ placeholder: "Search models", autofocus: true }}
-      emptyMessage="No model results"
-      key={(x) => `${x.provider.id}:${x.id}`}
-      items={models}
-      current={local.model.current()}
-      filterKeys={["provider.name", "name", "id"]}
+      <List
+        class={`flex-1 min-h-0 [&_[data-slot=list-scroll]]:flex-1 [&_[data-slot=list-scroll]]:min-h-0 ${props.class ?? ""}`}
+        search={{ placeholder: "搜索模型", autofocus: true }}
+        emptyMessage="没有匹配的模型"
+        key={(x) => `${x.provider.id}:${x.id}`}
+        items={models}
+        current={local.model.current()}
+        filterKeys={["provider.name", "name", "id"]}
       sortBy={(a, b) => a.name.localeCompare(b.name)}
       groupBy={(x) => x.provider.name}
       sortGroupsBy={(a, b) => {

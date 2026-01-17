@@ -73,11 +73,11 @@ export const DialogFork: Component = () => {
   }
 
   return (
-    <Dialog title="Fork from message">
+    <Dialog title="从消息分叉">
       <List
         class="flex-1 min-h-0 [&_[data-slot=list-scroll]]:flex-1 [&_[data-slot=list-scroll]]:min-h-0"
-        search={{ placeholder: "Search", autofocus: true }}
-        emptyMessage="No messages to fork from"
+        search={{ placeholder: "搜索", autofocus: true }}
+        emptyMessage="暂无可分叉的消息"
         key={(x) => x.id}
         items={messages}
         filterKeys={["text"]}

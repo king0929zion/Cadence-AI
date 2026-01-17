@@ -1671,7 +1671,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                 <Show when={permission.permissionsEnabled() && params.id}>
                   <TooltipKeybind
                     placement="top"
-                    title="Auto-accept edits"
+                    title={isCadenceMode() ? "自动接受编辑" : "Auto-accept edits"}
                     keybind={command.keybind("permissions.autoaccept")}
                   >
                     <Button

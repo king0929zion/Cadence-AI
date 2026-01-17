@@ -3,6 +3,7 @@ import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 import { TextField } from "@opencode-ai/ui/text-field"
 import { RadioGroup } from "@opencode-ai/ui/radio-group"
+import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
 import { base64Decode, base64Encode } from "@opencode-ai/util/encode"
 import { getFilename } from "@opencode-ai/util/path"
 import { DateTime } from "luxon"
@@ -10,6 +11,7 @@ import { useGlobalSync } from "@/context/global-sync"
 import { useConversation } from "@/context/conversation"
 
 type Scope = "当前项目" | "全部项目"
+type FolderFilter = "all" | "none" | string
 
 function extractDirFromPath(pathname: string): string | undefined {
   const match = pathname.match(/^\/chat\/([^/]+)(?:\/|$)/)
@@ -39,6 +41,7 @@ export default function ChatSearch() {
   const [scope, setScope] = createSignal<Scope>("当前项目")
   const [query, setQuery] = createSignal("")
   const [pinnedOnly, setPinnedOnly] = createSignal(false)
+  const [folderFilter, setFolderFilter] = createSignal<FolderFilter>("all")
   const [loadAllProjects, setLoadAllProjects] = createSignal(false)
 
   const allProjectsSorted = createMemo(() => {
@@ -62,6 +65,7 @@ export default function ChatSearch() {
   const results = createMemo(() => {
     const q = query().trim().toLowerCase()
     const pinned = pinnedOnly()
+    const folder = folderFilter()
 
     const rows: Array<{
       directory: string
@@ -79,6 +83,11 @@ export default function ChatSearch() {
         const title = s.title || "未命名对话"
         const meta = conversation.metaFor({ directory: dir, sessionId: s.id })
         if (pinned && !meta?.pinned) continue
+        if (folder !== "all") {
+          const f = meta?.folderId
+          if (folder === "none" && f) continue
+          if (folder !== "none" && f !== folder) continue
+        }
         if (q && !title.toLowerCase().includes(q)) continue
 
         const folderId = meta?.folderId
@@ -100,6 +109,19 @@ export default function ChatSearch() {
         return b.updated - a.updated
       })
       .slice(0, q ? 200 : 80)
+  })
+
+  const folderLabel = createMemo(() => {
+    const v = folderFilter()
+    if (v === "all") return "全部文件夹"
+    if (v === "none") return "未分类"
+    return conversation.folderById().get(v)?.name ?? "文件夹"
+  })
+
+  const currentProjectLabel = createMemo(() => {
+    const dir = activeDirectory()
+    if (!dir) return "未选择项目"
+    return `当前项目：${getFilename(dir)}`
   })
 
   const projectHint = createMemo(() => {
@@ -139,6 +161,32 @@ export default function ChatSearch() {
                 current={scope()}
                 onSelect={(v) => v && setScope(v)}
               />
+              <DropdownMenu>
+                <DropdownMenu.Trigger as={Button} variant="secondary" class="justify-between gap-2">
+                  <span class="truncate max-w-[9rem]">{folderLabel()}</span>
+                  <Icon name="chevron-down" size="small" class="text-text-weak" />
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Portal>
+                  <DropdownMenu.Content class="min-w-[220px]">
+                    <DropdownMenu.Item onSelect={() => setFolderFilter("all")}>
+                      <DropdownMenu.ItemLabel>全部文件夹</DropdownMenu.ItemLabel>
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item onSelect={() => setFolderFilter("none")}>
+                      <DropdownMenu.ItemLabel>未分类</DropdownMenu.ItemLabel>
+                    </DropdownMenu.Item>
+                    <Show when={conversation.folders().length > 0}>
+                      <DropdownMenu.Separator />
+                      <For each={conversation.folders()}>
+                        {(f) => (
+                          <DropdownMenu.Item onSelect={() => setFolderFilter(f.id)}>
+                            <DropdownMenu.ItemLabel>{f.name}</DropdownMenu.ItemLabel>
+                          </DropdownMenu.Item>
+                        )}
+                      </For>
+                    </Show>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Portal>
+              </DropdownMenu>
               <button
                 type="button"
                 class="h-9 px-3 rounded-md border text-13-medium"
@@ -150,6 +198,23 @@ export default function ChatSearch() {
               >
                 仅置顶
               </button>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 text-12-regular text-text-weak">
+              <div class="min-w-0 truncate">{currentProjectLabel()}</div>
+              <Show when={folderFilter() !== "all" || pinnedOnly() || query().trim()}>
+                <Button
+                  size="small"
+                  variant="ghost"
+                  onClick={() => {
+                    setFolderFilter("all")
+                    setPinnedOnly(false)
+                    setQuery("")
+                  }}
+                >
+                  清除筛选
+                </Button>
+              </Show>
             </div>
 
             <Show when={projectHint()}>

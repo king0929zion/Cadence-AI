@@ -38,7 +38,7 @@ const ChatTools = lazy(() => import("@/pages/chat-tools"))
 const ChatSearch = lazy(() => import("@/pages/chat-search"))
 const ChatAbout = lazy(() => import("@/pages/chat-about"))
 const Settings = lazy(() => import("@/pages/settings"))
-const Loading = () => <div class="size-full flex items-center justify-center text-text-weak">Loading...</div>
+const Loading = () => <div class="size-full flex items-center justify-center text-text-weak">加载中…</div>
 
 declare global {
   interface Window {

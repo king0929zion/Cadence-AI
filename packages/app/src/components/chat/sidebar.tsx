@@ -96,6 +96,21 @@ export function CadenceSidebar() {
     },
   ])
 
+  const primaryAction = createMemo(() => {
+    if (activeDirectory() && params.dir) {
+      return {
+        label: "新对话",
+        icon: "bubble-5" as const,
+        onClick: () => navigate(`/chat/${params.dir}/session`),
+      }
+    }
+    return {
+      label: "打开项目",
+      icon: "folder-add-left" as const,
+      onClick: chooseProject,
+    }
+  })
+
   async function chooseProject() {
     function resolve(result: string | string[] | null) {
       const directory = Array.isArray(result) ? result[0] : result
@@ -141,10 +156,10 @@ export function CadenceSidebar() {
           size="small"
           class="px-3"
           classList={{ "px-0 w-9 justify-center": ui.collapsed }}
-          onClick={chooseProject}
+          onClick={primaryAction().onClick}
         >
-          <Show when={!ui.collapsed} fallback={<Icon name="folder-add-left" size="small" />}>
-            打开项目
+          <Show when={!ui.collapsed} fallback={<Icon name={primaryAction().icon} size="small" />}>
+            {primaryAction().label}
           </Show>
         </Button>
       </div>
