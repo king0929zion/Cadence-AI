@@ -95,14 +95,24 @@ const CODE_PLACEHOLDERS = [
   "How do environment variables work here?",
 ]
 
+const CADENCE_PLACEHOLDERS_MOJIBAKE = [
+  "帮我把这段文字总结成要点，并给出行动项",
+  "把这段内容翻译成英文（保留格式）",
+  "写一封简洁专业的邮件",
+  "整理会议纪要：结论 / 决定 / 待办",
+  "给我一个利弊分析与建议",
+  "生成一个 7 天计划清单",
+  "把内容改写得更清晰、更有条理",
+]
+
 const CADENCE_PLACEHOLDERS = [
-  \"帮我把这段文字总结成要点，并给出行动项\",
-  \"把这段内容翻译成英文（保留格式）\",
-  \"写一封简洁专业的邮件\",
-  \"整理会议纪要：结论 / 决定 / 待办\",
-  \"给我一个利弊分析与建议\",
-  \"生成一个 7 天计划清单\",
-  \"把内容改写得更清晰、更有条理\",
+  "\u5e2e\u6211\u628a\u8fd9\u6bb5\u6587\u5b57\u603b\u7ed3\u6210\u8981\u70b9\uff0c\u5e76\u7ed9\u51fa\u884c\u52a8\u9879",
+  "\u628a\u8fd9\u6bb5\u5185\u5bb9\u7ffb\u8bd1\u6210\u82f1\u6587\uff08\u4fdd\u7559\u683c\u5f0f\uff09",
+  "\u5199\u4e00\u5c01\u7b80\u6d01\u4e13\u4e1a\u7684\u90ae\u4ef6",
+  "\u6574\u7406\u4f1a\u8bae\u7eaa\u8981\uff1a\u7ed3\u8bba / \u51b3\u5b9a / \u5f85\u529e",
+  "\u7ed9\u6211\u4e00\u4e2a\u5229\u5f0a\u5206\u6790\u4e0e\u5efa\u8bae",
+  "\u751f\u6210\u4e00\u4e2a 7 \u5929\u8ba1\u5212\u6e05\u5355",
+  "\u628a\u5185\u5bb9\u6539\u5199\u5f97\u66f4\u6e05\u6670\uff0c\u66f4\u6709\u6761\u7406",
 ]
 
 interface SlashCommand {
