@@ -6,8 +6,9 @@ import { Icon } from "@opencode-ai/ui/icon"
 import { ThemePanel } from "@/components/settings/theme-panel"
 import { ShortcutsPanel } from "@/components/settings/shortcuts-panel"
 import { GeneralPanel } from "@/components/settings/general-panel"
+import { AboutPanel } from "@/components/settings/about-panel"
 
-type Tab = "general" | "theme" | "shortcuts"
+type Tab = "general" | "theme" | "shortcuts" | "about"
 
 export default function Settings() {
   const navigate = useNavigate()
@@ -58,6 +59,16 @@ export default function Settings() {
           >
             通用
           </button>
+          <button
+            class="h-9 px-3 rounded-md border text-13-medium"
+            classList={{
+              "border-text-interactive-base bg-surface-info-base/20": store.tab === "about",
+              "border-border-weak-base bg-surface-base hover:bg-surface-raised-base-hover": store.tab !== "about",
+            }}
+            onClick={() => setStore("tab", "about")}
+          >
+            关于
+          </button>
         </div>
 
         <div class="mt-6">
@@ -67,6 +78,9 @@ export default function Settings() {
             </Match>
             <Match when={store.tab === "shortcuts"}>
               <ShortcutsPanel />
+            </Match>
+            <Match when={store.tab === "about"}>
+              <AboutPanel />
             </Match>
             <Match when={true}>
               <GeneralPanel />

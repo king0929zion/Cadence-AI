@@ -47,6 +47,22 @@ export default function ChatHome() {
       .slice(0, 12)
   })
 
+  const pinnedSessions = createMemo(() => {
+    const rows: SessionRow[] = []
+    for (const dir of recentDirectories()) {
+      const [store] = sync.child(dir)
+      for (const session of store.session) {
+        if (!session?.id) continue
+        if (!conversation.metaFor({ directory: dir, sessionId: session.id })?.pinned) continue
+        rows.push({ directory: dir, session })
+      }
+    }
+
+    return rows
+      .toSorted((a, b) => (b.session.time?.updated ?? b.session.time?.created ?? 0) - (a.session.time?.updated ?? 0))
+      .slice(0, 8)
+  })
+
   return (
     <div class="cadence-page min-h-0 flex-1 overflow-auto">
       <div class="mx-auto w-full max-w-5xl px-5 py-10">
@@ -89,6 +105,10 @@ export default function ChatHome() {
                 <Icon name="bullet-list" size="small" />
                 工具中心
               </Button>
+              <Button size="large" variant="secondary" onClick={() => navigate("/chat/search")}>
+                <Icon name="magnifying-glass" size="small" />
+                搜索
+              </Button>
             </div>
           </div>
         </div>
@@ -125,6 +145,40 @@ export default function ChatHome() {
             </For>
           </div>
 
+          <Show when={pinnedSessions().length > 0}>
+            <div class="mt-6 cadence-card p-4">
+              <div class="flex items-center justify-between">
+                <div class="text-14-medium text-text-strong">置顶</div>
+                <Button variant="ghost" size="small" onClick={() => navigate("/chat/search")}>
+                  <Icon name="magnifying-glass" size="small" />
+                  全局搜索
+                </Button>
+              </div>
+              <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-2">
+                <For each={pinnedSessions()}>
+                  {(row) => (
+                    <Button
+                      size="large"
+                      variant="ghost"
+                      class="cadence-list-item justify-between px-3"
+                      onClick={() => navigate(`/chat/${base64Encode(row.directory)}/session/${row.session.id}`)}
+                    >
+                      <div class="min-w-0 flex flex-col items-start gap-0.5">
+                        <div class="text-14-medium text-text-strong truncate max-w-full">
+                          {row.session.title || "未命名对话"}
+                        </div>
+                        <div class="text-12-regular text-text-weak truncate max-w-full">{getFilename(row.directory)}</div>
+                      </div>
+                      <div class="shrink-0 text-12-regular text-text-weak">
+                        {DateTime.fromMillis(row.session.time?.updated ?? row.session.time?.created ?? 0).toRelative() ?? ""}
+                      </div>
+                    </Button>
+                  )}
+                </For>
+              </div>
+            </div>
+          </Show>
+
           <div class="mt-6 cadence-card p-4">
             <div class="text-14-medium text-text-strong">快捷入口</div>
             <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -132,13 +186,13 @@ export default function ChatHome() {
                 <Icon name="bullet-list" size="small" />
                 工具与会话管理
               </Button>
+              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/chat/search")}>
+                <Icon name="magnifying-glass" size="small" />
+                全局搜索
+              </Button>
               <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/chat/settings")}>
                 <Icon name="settings-gear" size="small" />
                 主题与快捷键
-              </Button>
-              <Button size="large" variant="secondary" class="justify-start" onClick={() => navigate("/")}>
-                <Icon name="folder-add-left" size="small" />
-                打开项目
               </Button>
             </div>
           </div>

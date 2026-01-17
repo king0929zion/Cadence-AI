@@ -1,4 +1,3 @@
-import { For, Show, createMemo, createSignal } from "solid-js"
 import { useLocation, useNavigate } from "@solidjs/router"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
@@ -63,20 +62,20 @@ export default function ChatTools() {
     })
   })
 
-  const tools = createMemo(
+  const quickActions = createMemo(
     () =>
       [
         {
           title: "新建对话",
-          description: "在当前项目中开始新的对话",
+          description: "从当前项目开始一个新的对话",
           icon: "bubble-5" as const,
           onClick: () => command.trigger("cadence.chat.new"),
         },
         {
-          title: "搜索对话",
-          description: "聚焦侧边栏搜索框（标题搜索）",
+          title: "全局搜索",
+          description: "跨项目搜索对话（优先标题）",
           icon: "magnifying-glass" as const,
-          onClick: () => command.trigger("cadence.chat.search"),
+          onClick: () => navigate(`/chat/search?return=${encodeURIComponent(returnTo())}`),
         },
         {
           title: "打开设置",
@@ -85,8 +84,14 @@ export default function ChatTools() {
           onClick: () => navigate("/chat/settings"),
         },
         {
-          title: "管理项目",
-          description: "打开项目/服务器选择页",
+          title: "关于 Cadence",
+          description: "版本、更新与下载入口",
+          icon: "help" as const,
+          onClick: () => navigate("/chat/about"),
+        },
+        {
+          title: "项目与服务器",
+          description: "切换项目或连接其他服务器",
           icon: "folder-add-left" as const,
           onClick: () => navigate("/"),
         },
@@ -99,7 +104,9 @@ export default function ChatTools() {
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0">
             <div class="cadence-title text-24-semibold text-text-strong">工具中心</div>
-            <div class="mt-1 text-14-regular text-text-weak">更可视化的入口与快捷能力，专注日常对话体验。</div>
+            <div class="mt-1 text-14-regular text-text-weak">
+              常用入口、命令与项目切换。聚焦日用对话体验与可视化管理。
+            </div>
           </div>
           <div class="flex gap-2">
             <Button size="large" variant="secondary" onClick={() => navigate(returnTo())}>
@@ -124,50 +131,60 @@ export default function ChatTools() {
               <div class="text-14-medium text-text-strong truncate">{server.name}</div>
             </div>
             <Show when={activeDirectory()}>
-              <div class="mt-1 text-12-regular text-text-weak truncate">项目：{activeDirectory()}</div>
+              {(dir) => (
+                <div class="mt-2 text-12-regular text-text-weak">
+                  <div class="truncate">项目：{getFilename(dir())}</div>
+                  <div class="truncate">{dir()}</div>
+                </div>
+              )}
             </Show>
           </div>
 
           <Show when={activeDirEncoded()}>
-            <Button size="large" onClick={() => navigate(`/chat/${activeDirEncoded()}/session`)}>
-              <Icon name="bubble-5" size="small" />
-              进入该项目对话
-            </Button>
+            {(encoded) => (
+              <Button size="large" onClick={() => navigate(`/chat/${encoded()}/session`)}>
+                <Icon name="bubble-5" size="small" />
+                进入项目对话
+              </Button>
+            )}
           </Show>
         </div>
 
-        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-          <For each={tools()}>
-            {(item) => (
-              <button
-                type="button"
-                class="cadence-card p-5 text-left hover:bg-surface-raised-base-hover transition-colors"
-                onClick={item.onClick}
-              >
-                <div class="flex items-start gap-3">
-                  <div class="size-10 rounded-md border border-border-weak-base bg-surface-base flex items-center justify-center shrink-0">
-                    <Icon name={item.icon} size="small" />
+        <div class="mt-6">
+          <div class="text-14-medium text-text-strong">快捷入口</div>
+          <div class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <For each={quickActions()}>
+              {(item) => (
+                <button
+                  type="button"
+                  class="cadence-card p-5 text-left hover:bg-surface-raised-base-hover transition-colors"
+                  onClick={item.onClick}
+                >
+                  <div class="flex items-start gap-3">
+                    <div class="size-10 rounded-md border border-border-weak-base bg-surface-base flex items-center justify-center shrink-0">
+                      <Icon name={item.icon} size="small" />
+                    </div>
+                    <div class="min-w-0">
+                      <div class="text-14-medium text-text-strong">{item.title}</div>
+                      <div class="mt-1 text-12-regular text-text-weak">{item.description}</div>
+                    </div>
                   </div>
-                  <div class="min-w-0">
-                    <div class="text-14-medium text-text-strong">{item.title}</div>
-                    <div class="mt-1 text-12-regular text-text-weak">{item.description}</div>
-                  </div>
-                </div>
-              </button>
-            )}
-          </For>
+                </button>
+              )}
+            </For>
+          </div>
         </div>
 
         <div class="mt-8">
           <div class="flex items-end justify-between gap-4">
             <div>
               <div class="text-14-medium text-text-strong">快捷指令</div>
-              <div class="mt-1 text-12-regular text-text-weak">在输入框中输入 “/” 也可以呼出。</div>
+              <div class="mt-1 text-12-regular text-text-weak">在输入框里输入 “/” 也可以呼出。</div>
             </div>
             <TextField
               value={search()}
-              placeholder="搜索指令（/xxx）"
-              class="w-full md:w-80"
+              placeholder="搜索指令（例如：tools / chat / find）"
+              class="w-full md:w-96"
               onInput={(e) => setSearch(e.currentTarget.value)}
             />
           </div>

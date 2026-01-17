@@ -59,6 +59,7 @@ export function CadenceSidebar() {
     () =>
       [
         { label: "对话", href: "/chat", icon: "bubble-5" as const },
+        { label: "搜索", href: "/chat/search", icon: "magnifying-glass" as const },
         { label: "工具", href: "/chat/tools", icon: "bullet-list" as const },
         { label: "设置", href: "/chat/settings", icon: "settings-gear" as const },
       ] as const,
@@ -143,7 +144,7 @@ export function CadenceSidebar() {
           onClick={chooseProject}
         >
           <Show when={!ui.collapsed} fallback={<Icon name="folder-add-left" size="small" />}>
-            新对话
+            打开项目
           </Show>
         </Button>
       </div>

@@ -104,8 +104,8 @@
 }
 
 .cadence-nav-item[data-active="true"] {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid var(--cadence-border);
+  background: var(--cadence-panel-strong);
+  border: 1px solid var(--cadence-border-strong);
 }
 
 .cadence-input-shell {

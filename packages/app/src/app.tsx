@@ -35,6 +35,8 @@ const Session = lazy(() => import("@/pages/session"))
 const ChatHome = lazy(() => import("@/pages/chat-home"))
 const ChatSession = lazy(() => import("@/pages/chat-session"))
 const ChatTools = lazy(() => import("@/pages/chat-tools"))
+const ChatSearch = lazy(() => import("@/pages/chat-search"))
+const ChatAbout = lazy(() => import("@/pages/chat-about"))
 const Settings = lazy(() => import("@/pages/settings"))
 const Loading = () => <div class="size-full flex items-center justify-center text-text-weak">Loading...</div>
 
@@ -146,6 +148,22 @@ export function AppInterface(props: { defaultUrl?: string }) {
                 )}
               />
               <Route
+                path="/chat/search"
+                component={() => (
+                  <Suspense fallback={<Loading />}>
+                    <ChatSearch />
+                  </Suspense>
+                )}
+              />
+              <Route
+                path="/chat/about"
+                component={() => (
+                  <Suspense fallback={<Loading />}>
+                    <ChatAbout />
+                  </Suspense>
+                )}
+              />
+              <Route
                 path="/chat/settings"
                 component={() => (
                   <Suspense fallback={<Loading />}>
@@ -170,10 +188,6 @@ export function AppInterface(props: { defaultUrl?: string }) {
                   )}
                 />
               </Route>
-              <Route
-                path="/templates"
-                component={() => <Navigate href="/chat" />}
-              />
               <Route
                 path="/settings"
                 component={() => <Navigate href="/chat/settings" />}

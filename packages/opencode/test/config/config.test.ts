@@ -385,6 +385,66 @@ Nested agent prompt`,
   })
 })
 
+test("migrates legacy plural top-level keys (providers/agents/models)", async () => {
+  await using tmp = await tmpdir({
+    init: async (dir) => {
+      await Bun.write(
+        path.join(dir, "opencode.json"),
+        JSON.stringify(
+          {
+            providers: {
+              openai: {},
+            },
+            agents: {},
+            models: {
+              default: "openai/gpt-4o-mini",
+              small: "openai/gpt-4o-mini",
+            },
+          },
+          null,
+          2,
+        ),
+      )
+    },
+  })
+
+  await Instance.provide({
+    directory: tmp.path,
+    fn: async () => {
+      const config = await Config.get()
+      expect(config.provider?.openai).toEqual({})
+      expect(config.model).toBe("openai/gpt-4o-mini")
+      expect(config.small_model).toBe("openai/gpt-4o-mini")
+    },
+  })
+})
+
+test("drops invalid legacy plural keys (providers/agents/models)", async () => {
+  await using tmp = await tmpdir({
+    init: async (dir) => {
+      await Bun.write(
+        path.join(dir, "opencode.json"),
+        JSON.stringify(
+          {
+            providers: [],
+            agents: [],
+            models: [],
+          },
+          null,
+          2,
+        ),
+      )
+    },
+  })
+
+  await Instance.provide({
+    directory: tmp.path,
+    fn: async () => {
+      await expect(Config.get()).resolves.toBeTruthy()
+    },
+  })
+})
+
 test("loads commands from .opencode/command (singular)", async () => {
   await using tmp = await tmpdir({
     init: async (dir) => {

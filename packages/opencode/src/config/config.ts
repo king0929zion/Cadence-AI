@@ -1219,14 +1219,18 @@ export namespace Config {
     // - providers -> provider
     // - agents -> agent
     // - models -> (no longer supported at top-level; attempt best-effort migration, otherwise drop)
-    if (data.providers && typeof data.providers === "object" && !Array.isArray(data.providers)) {
-      data.provider = mergeDeep(data.provider ?? {}, data.providers)
+    if ("providers" in data) {
+      if (data.providers && typeof data.providers === "object" && !Array.isArray(data.providers)) {
+        data.provider = mergeDeep(data.provider ?? {}, data.providers)
+      }
       delete data.providers
       didMigrate = true
     }
 
-    if (data.agents && typeof data.agents === "object" && !Array.isArray(data.agents)) {
-      data.agent = mergeDeep(data.agent ?? {}, data.agents)
+    if ("agents" in data) {
+      if (data.agents && typeof data.agents === "object" && !Array.isArray(data.agents)) {
+        data.agent = mergeDeep(data.agent ?? {}, data.agents)
+      }
       delete data.agents
       didMigrate = true
     }

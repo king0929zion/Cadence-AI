@@ -1,6 +1,6 @@
-import { type ParentProps } from "solid-js"
-import { useCommand } from "@/context/command"
+import type { ParentProps } from "solid-js"
 import { useLocation, useNavigate, useParams } from "@solidjs/router"
+import { useCommand } from "@/context/command"
 import { CadenceSidebar } from "@/components/chat/sidebar"
 
 export default function ChatLayout(props: ParentProps) {
@@ -33,12 +33,21 @@ export default function ChatLayout(props: ParentProps) {
     {
       id: "cadence.tools",
       title: "打开工具中心",
-      description: "常用入口、会话管理与更多可视化功能",
+      description: "常用入口、会话管理与更多可视化能力",
       category: "Cadence",
       keybind: "mod+t",
       slash: "tools",
       suggested: true,
       onSelect: () => navigate(`/chat/tools?return=${encodeURIComponent(location.pathname)}`),
+    },
+    {
+      id: "cadence.search",
+      title: "全局搜索",
+      description: "跨项目搜索对话（优先标题）",
+      category: "Cadence",
+      keybind: "mod+shift+f",
+      slash: "find",
+      onSelect: () => navigate(`/chat/search?return=${encodeURIComponent(location.pathname)}`),
     },
     {
       id: "cadence.settings",
@@ -48,6 +57,14 @@ export default function ChatLayout(props: ParentProps) {
       slash: "settings",
       keybind: "mod+comma",
       onSelect: () => navigate("/chat/settings"),
+    },
+    {
+      id: "cadence.about",
+      title: "关于 Cadence",
+      description: "版本、更新与链接",
+      category: "Cadence",
+      slash: "about",
+      onSelect: () => navigate("/chat/about"),
     },
     {
       id: "cadence.projects",
