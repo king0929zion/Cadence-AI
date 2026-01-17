@@ -1,4 +1,4 @@
-import { useNavigate } from "@solidjs/router"
+﻿import { useNavigate } from "@solidjs/router"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 import { AboutPanel } from "@/components/settings/about-panel"
@@ -27,4 +27,3 @@ export default function ChatAbout() {
     </div>
   )
 }
-

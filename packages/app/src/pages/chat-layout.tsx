@@ -1,4 +1,4 @@
-import type { ParentProps } from "solid-js"
+﻿import type { ParentProps } from "solid-js"
 import { useLocation, useNavigate, useParams } from "@solidjs/router"
 import { useCommand } from "@/context/command"
 import { CadenceSidebar } from "@/components/chat/sidebar"

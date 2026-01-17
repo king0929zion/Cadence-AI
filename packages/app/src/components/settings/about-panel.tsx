@@ -1,36 +1,15 @@
-import { Button } from "@opencode-ai/ui/button"
+﻿import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 import { showToast } from "@opencode-ai/ui/toast"
 import { usePlatform } from "@/context/platform"
 import { useServer } from "@/context/server"
 import { useGlobalSync } from "@/context/global-sync"
+import { copyText } from "@/utils/clipboard"
 
 function buildConfigPath(home?: string) {
   if (!home) return "~/.config/opencode/opencode.json"
   const sep = home.includes("\\") ? "\\" : "/"
   return `${home}${sep}.config${sep}opencode${sep}opencode.json`
-}
-
-async function copyToClipboard(text: string) {
-  try {
-    await navigator.clipboard.writeText(text)
-    return true
-  } catch {
-    try {
-      const el = document.createElement("textarea")
-      el.value = text
-      el.style.position = "fixed"
-      el.style.left = "-9999px"
-      document.body.appendChild(el)
-      el.focus()
-      el.select()
-      const ok = document.execCommand("copy")
-      document.body.removeChild(el)
-      return ok
-    } catch {
-      return false
-    }
-  }
 }
 
 export function AboutPanel() {
@@ -171,7 +150,7 @@ export function AboutPanel() {
           <Button
             variant="secondary"
             onClick={async () => {
-              const ok = await copyToClipboard(configPath())
+              const ok = await copyText(configPath())
               showToast({ title: ok ? "已复制路径" : "复制失败", description: ok ? undefined : "当前环境不支持剪贴板写入。" })
             }}
           >

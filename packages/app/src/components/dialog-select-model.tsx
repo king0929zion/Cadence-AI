@@ -55,10 +55,10 @@ const ModelList: Component<{
         <div class="w-full flex items-center gap-x-2 text-13-regular">
           <span class="truncate">{i.name}</span>
           <Show when={i.provider.id === "opencode" && (!i.cost || i.cost?.input === 0)}>
-            <Tag>Free</Tag>
+            <Tag>免费</Tag>
           </Show>
           <Show when={i.latest}>
-            <Tag>Latest</Tag>
+            <Tag>最新</Tag>
           </Show>
         </div>
       )}
@@ -90,7 +90,7 @@ export const DialogSelectModel: Component<{ provider?: string }> = (props) => {
 
   return (
     <Dialog
-      title="Select model"
+      title="选择模型"
       action={
         <Button
           class="h-7 -my-1 text-14-medium"
@@ -98,7 +98,7 @@ export const DialogSelectModel: Component<{ provider?: string }> = (props) => {
           tabIndex={-1}
           onClick={() => dialog.show(() => <DialogSelectProvider />)}
         >
-          Connect provider
+          连接提供商
         </Button>
       }
     >
@@ -108,7 +108,7 @@ export const DialogSelectModel: Component<{ provider?: string }> = (props) => {
         class="ml-3 mt-5 mb-6 text-text-base self-start"
         onClick={() => dialog.show(() => <DialogManageModels />)}
       >
-        Manage models
+        管理模型
       </Button>
     </Dialog>
   )

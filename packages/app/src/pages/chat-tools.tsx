@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "@solidjs/router"
+﻿import { useLocation, useNavigate } from "@solidjs/router"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 import { TextField } from "@opencode-ai/ui/text-field"
@@ -8,6 +8,10 @@ import { base64Decode, base64Encode } from "@opencode-ai/util/encode"
 import { getFilename } from "@opencode-ai/util/path"
 import { useServer } from "@/context/server"
 import { useConversation } from "@/context/conversation"
+import { IconButton } from "@opencode-ai/ui/icon-button"
+import { showToast } from "@opencode-ai/ui/toast"
+import { copyText } from "@/utils/clipboard"
+import { RadioGroup } from "@opencode-ai/ui/radio-group"
 
 function extractDirFromPath(pathname: string): string | undefined {
   const match = pathname.match(/^\/chat\/([^/]+)(?:\/|$)/)
@@ -65,11 +69,16 @@ export default function ChatTools() {
   })
 
   const [search, setSearch] = createSignal("")
+  const [commandScope, setCommandScope] = createSignal<"常用" | "全部">("常用")
 
   const slashCommands = createMemo(() => {
     const seen = new Set<string>()
     return command.options
       .filter((opt) => opt.slash && !opt.disabled)
+      .filter((opt) => {
+        if (commandScope() === "全部") return true
+        return opt.suggested || opt.category === "Cadence"
+      })
       .filter((opt) => {
         const key = opt.slash!
         if (seen.has(key)) return false
@@ -89,6 +98,11 @@ export default function ChatTools() {
         (c.description ?? "").toLowerCase().includes(q)
       )
     })
+  })
+
+  let searchInputRef: HTMLInputElement | undefined
+  onMount(() => {
+    requestAnimationFrame(() => searchInputRef?.focus())
   })
 
   const quickActions = createMemo(
@@ -244,12 +258,23 @@ export default function ChatTools() {
               <div class="text-14-medium text-text-strong">快捷指令</div>
               <div class="mt-1 text-12-regular text-text-weak">在输入框里输入 “/” 也可以呼出。</div>
             </div>
-            <TextField
-              value={search()}
-              placeholder="搜索指令（例如：tools / chat / find）"
-              class="w-full md:w-96"
-              onInput={(e) => setSearch(e.currentTarget.value)}
-            />
+            <div class="w-full md:w-[520px] flex gap-2">
+              <TextField
+                value={search()}
+                placeholder="搜索指令（例如：tools / chat / find）"
+                class="w-full"
+                ref={(el) => {
+                  searchInputRef = el
+                }}
+                onInput={(e) => setSearch(e.currentTarget.value)}
+              />
+              <RadioGroup
+                size="small"
+                options={["常用", "全部"] as const}
+                current={commandScope()}
+                onSelect={(v) => v && setCommandScope(v)}
+              />
+            </div>
           </div>
 
           <div class="mt-3 cadence-card p-4">
@@ -269,13 +294,25 @@ export default function ChatTools() {
                         <div class="text-13-medium text-text-strong truncate">/{opt.slash}</div>
                         <div class="text-12-regular text-text-weak truncate">{opt.title}</div>
                       </div>
-                      <Show when={command.keybind(opt.id)}>
-                        {(kb) => (
-                          <kbd class="px-2 py-1 rounded border border-border-weak-base bg-surface-base text-12-regular text-text-weak">
-                            {kb()}
-                          </kbd>
-                        )}
-                      </Show>
+                      <div class="flex items-center gap-2 shrink-0">
+                        <IconButton
+                          icon="copy"
+                          variant="ghost"
+                          class="size-7 rounded-md"
+                          onClick={async (e) => {
+                            e.stopPropagation()
+                            const ok = await copyText(`/${opt.slash}`)
+                            showToast({ title: ok ? "已复制指令" : "复制失败", description: ok ? `/${opt.slash}` : undefined })
+                          }}
+                        />
+                        <Show when={command.keybind(opt.id)}>
+                          {(kb) => (
+                            <kbd class="px-2 py-1 rounded border border-border-weak-base bg-surface-base text-12-regular text-text-weak">
+                              {kb()}
+                            </kbd>
+                          )}
+                        </Show>
+                      </div>
                     </div>
                   </button>
                 )}

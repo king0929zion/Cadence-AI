@@ -1656,7 +1656,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                 <Show when={local.model.variant.list().length > 0}>
                   <TooltipKeybind
                     placement="top"
-                    title="Thinking effort"
+                    title={isCadenceMode() ? "思考强度" : "Thinking effort"}
                     keybind={command.keybind("model.variant.cycle")}
                   >
                     <Button
@@ -1664,7 +1664,7 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
                       class="text-text-base _hidden group-hover/prompt-input:inline-block capitalize text-12-regular"
                       onClick={() => local.model.variant.cycle()}
                     >
-                      {local.model.variant.current() ?? "Default"}
+                      {local.model.variant.current() ?? (isCadenceMode() ? "默认" : "Default")}
                     </Button>
                   </TooltipKeybind>
                 </Show>
