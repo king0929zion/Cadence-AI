@@ -1,11 +1,15 @@
-import { For, Show, createMemo } from "solid-js"
+import { For, Show, createMemo, createSignal } from "solid-js"
 import { produce } from "solid-js/store"
 import type { Message, Part, Session } from "@opencode-ai/sdk/v2/client"
 import { Button } from "@opencode-ai/ui/button"
+import { Dialog } from "@opencode-ai/ui/dialog"
+import { TextField } from "@opencode-ai/ui/text-field"
+import { Icon } from "@opencode-ai/ui/icon"
 import { DateTime } from "luxon"
 import { DropdownMenu } from "@opencode-ai/ui/dropdown-menu"
 import { IconButton } from "@opencode-ai/ui/icon-button"
 import { showToast } from "@opencode-ai/ui/toast"
+import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { useConversation } from "@/context/conversation"
 import { useGlobalSDK } from "@/context/global-sdk"
 import { useGlobalSync } from "@/context/global-sync"
@@ -41,6 +45,7 @@ export function ConversationList(props: {
   selectedId?: string
   onSelect: (session: Session) => void
 }) {
+  const dialog = useDialog()
   const conversation = useConversation()
   const globalSDK = useGlobalSDK()
   const sync = useGlobalSync()
@@ -60,6 +65,45 @@ export function ConversationList(props: {
         return (b.time?.updated ?? b.time?.created ?? 0) - (a.time?.updated ?? a.time?.created ?? 0)
       })
   })
+
+  const folders = createMemo(() => conversation.folders().slice().toSorted((a, b) => a.name.localeCompare(b.name)))
+
+  const openFolderDialog = (opts: { title: string; initial?: string; onSubmit: (name: string) => void }) => {
+    dialog.show(() => {
+      const [name, setName] = createSignal(opts.initial ?? "")
+      const submit = () => {
+        const value = name().trim()
+        if (!value) return
+        opts.onSubmit(value)
+        dialog.close()
+      }
+
+      return (
+        <Dialog
+          title={opts.title}
+          action={<IconButton type="button" icon="close" variant="ghost" onClick={() => dialog.close()} />}
+        >
+          <div class="flex flex-col gap-3">
+            <TextField
+              autofocus
+              value={name()}
+              placeholder="输入文件夹名称"
+              onInput={(e) => setName(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") submit()
+              }}
+            />
+            <div class="flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => dialog.close()}>
+                取消
+              </Button>
+              <Button onClick={submit}>保存</Button>
+            </div>
+          </div>
+        </Dialog>
+      )
+    })
+  }
 
   const exportPayload = (session: Session) => {
     const [workspace] = sync.child(props.directory)
@@ -138,6 +182,7 @@ export function ConversationList(props: {
       <For each={ordered()}>
         {(session) => {
           const pinned = createMemo(() => !!conversation.metaFor(keyFor(session))?.pinned)
+          const folderId = createMemo(() => conversation.metaFor(keyFor(session))?.folderId)
 
           return (
             <li class="group flex items-center gap-1">
@@ -172,6 +217,50 @@ export function ConversationList(props: {
                     <DropdownMenu.Item onSelect={() => conversation.togglePinned(keyFor(session))}>
                       <DropdownMenu.ItemLabel>{pinned() ? "取消置顶" : "置顶"}</DropdownMenu.ItemLabel>
                     </DropdownMenu.Item>
+                    <DropdownMenu.Sub>
+                      <DropdownMenu.SubTrigger class="flex items-center justify-between gap-3">
+                        <DropdownMenu.ItemLabel>移动到文件夹</DropdownMenu.ItemLabel>
+                        <Icon name="chevron-right" size="small" />
+                      </DropdownMenu.SubTrigger>
+                      <DropdownMenu.Portal>
+                        <DropdownMenu.SubContent class="mt-1">
+                          <DropdownMenu.Item onSelect={() => conversation.setConversationFolder(keyFor(session), undefined)}>
+                            <DropdownMenu.ItemLabel>无文件夹</DropdownMenu.ItemLabel>
+                          </DropdownMenu.Item>
+                          <Show when={folders().length > 0}>
+                            <DropdownMenu.Separator />
+                          </Show>
+                          <For each={folders()}>
+                            {(folder) => (
+                              <DropdownMenu.Item
+                                onSelect={() => conversation.setConversationFolder(keyFor(session), folder.id)}
+                              >
+                                <DropdownMenu.ItemLabel>
+                                  {folder.name}
+                                  <Show when={folderId() === folder.id}>
+                                    <span class="ml-2 text-12-regular text-text-weak">当前</span>
+                                  </Show>
+                                </DropdownMenu.ItemLabel>
+                              </DropdownMenu.Item>
+                            )}
+                          </For>
+                          <DropdownMenu.Separator />
+                          <DropdownMenu.Item
+                            onSelect={() =>
+                              openFolderDialog({
+                                title: "新建文件夹",
+                                onSubmit: (name) => {
+                                  const id = conversation.upsertFolder({ name })
+                                  conversation.setConversationFolder(keyFor(session), id)
+                                },
+                              })
+                            }
+                          >
+                            <DropdownMenu.ItemLabel>新建文件夹…</DropdownMenu.ItemLabel>
+                          </DropdownMenu.Item>
+                        </DropdownMenu.SubContent>
+                      </DropdownMenu.Portal>
+                    </DropdownMenu.Sub>
                     <DropdownMenu.Separator />
                     <DropdownMenu.Item onSelect={() => exportAsMarkdown(session)}>
                       <DropdownMenu.ItemLabel>导出 Markdown</DropdownMenu.ItemLabel>

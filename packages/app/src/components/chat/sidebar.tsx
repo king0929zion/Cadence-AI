@@ -14,6 +14,8 @@ import { ConversationList } from "./conversation-list"
 import { getFilename } from "@opencode-ai/util/path"
 import { Persist, persisted } from "@/utils/persist"
 import { useCommand } from "@/context/command"
+import { useConversation } from "@/context/conversation"
+import { FolderManager, type FolderFilterKey } from "./folder-manager"
 
 export function CadenceSidebar() {
   const navigate = useNavigate()
@@ -24,12 +26,14 @@ export function CadenceSidebar() {
   const server = useServer()
   const sync = useGlobalSync()
   const command = useCommand()
+  const conversation = useConversation()
 
   const [ui, setUi] = persisted(
     Persist.global("cadence.sidebar", ["cadence.sidebar.v1"]),
     createStore({
       collapsed: false,
       query: "",
+      filter: "all" as FolderFilterKey,
     }),
   )
 
@@ -64,8 +68,19 @@ export function CadenceSidebar() {
     const workspace = activeWorkspace()
     if (!workspace) return []
     const q = ui.query.trim().toLowerCase()
-    if (!q) return workspace.session
-    return workspace.session.filter((s) => (s.title || "未命名对话").toLowerCase().includes(q))
+    let result = workspace.session
+
+    if (ui.filter === "pinned") {
+      result = result.filter((s) => !!conversation.metaFor({ directory: activeDirectory()!, sessionId: s.id })?.pinned)
+    } else if (ui.filter.startsWith("folder:")) {
+      const folderId = ui.filter.slice("folder:".length)
+      result = result.filter(
+        (s) => conversation.metaFor({ directory: activeDirectory()!, sessionId: s.id })?.folderId === folderId,
+      )
+    }
+
+    if (!q) return result
+    return result.filter((s) => (s.title || "未命名对话").toLowerCase().includes(q))
   })
 
   command.register(() => [
@@ -186,12 +201,23 @@ export function CadenceSidebar() {
           <Match when={activeDirectory()}>
             <Show when={activeWorkspace()} keyed>
               {() => (
-                <ConversationList
-                  directory={activeDirectory()!}
-                  sessions={filteredSessions()}
-                  selectedId={params.id}
-                  onSelect={(session) => navigate(`/chat/${params.dir}/session/${session.id}`)}
-                />
+                <>
+                  <FolderManager
+                    directory={activeDirectory()!}
+                    sessions={activeWorkspace()!.session}
+                    collapsed={ui.collapsed}
+                    filter={ui.filter}
+                    onFilterChange={(filter) => setUi("filter", filter)}
+                  />
+                  <div class="mt-3 px-2">
+                    <ConversationList
+                      directory={activeDirectory()!}
+                      sessions={filteredSessions()}
+                      selectedId={params.id}
+                      onSelect={(session) => navigate(`/chat/${params.dir}/session/${session.id}`)}
+                    />
+                  </div>
+                </>
               )}
             </Show>
           </Match>
