@@ -993,7 +993,17 @@ export const PromptInput: Component<PromptInputProps> = (props) => {
 
     // Note: Shift+Enter is handled earlier, before IME check
     if (event.key === "Enter" && !event.shiftKey) {
-      handleSubmit(event)
+      if (isCadenceMode()) {
+        const mod = (event.metaKey || event.ctrlKey) && !event.altKey
+        if (mod) {
+          handleSubmit(event)
+        } else {
+          addPart({ type: "text", content: "\n", start: 0, end: 0 })
+          event.preventDefault()
+        }
+      } else {
+        handleSubmit(event)
+      }
     }
     if (event.key === "Escape") {
       if (store.popover) {

@@ -1,14 +1,26 @@
-﻿import { type ParentProps } from "solid-js"
+import { type ParentProps } from "solid-js"
 import { useCommand } from "@/context/command"
-import { useLocation, useNavigate } from "@solidjs/router"
+import { useLocation, useNavigate, useParams } from "@solidjs/router"
 import { CadenceSidebar } from "@/components/chat/sidebar"
 
 export default function ChatLayout(props: ParentProps) {
   const navigate = useNavigate()
   const location = useLocation()
+  const params = useParams()
   const command = useCommand()
 
   command.register(() => [
+    {
+      id: "cadence.chat.new",
+      title: "新建对话",
+      description: "在当前项目中创建一个新对话",
+      category: "Cadence",
+      keybind: "mod+n",
+      onSelect: () => {
+        if (params.dir) navigate(`/chat/${params.dir}/session`)
+        else navigate("/chat")
+      },
+    },
     {
       id: "cadence.chat.home",
       title: "回到对话首页",
@@ -23,6 +35,7 @@ export default function ChatLayout(props: ParentProps) {
       title: "打开模板库",
       description: "选择提示词模板并插入输入框",
       category: "Cadence",
+      keybind: "mod+t",
       slash: "templates",
       suggested: true,
       onSelect: () => navigate(`/chat/templates?return=${encodeURIComponent(location.pathname)}`),
@@ -33,6 +46,7 @@ export default function ChatLayout(props: ParentProps) {
       description: "主题、快捷键与通用设置",
       category: "Cadence",
       slash: "settings",
+      keybind: "mod+comma",
       onSelect: () => navigate("/chat/settings"),
     },
     {

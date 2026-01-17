@@ -21,6 +21,15 @@ export const { use: useConversation, provider: ConversationProvider } = createSi
     )
 
     const folderById = createMemo(() => new Map(store.folders.map((f) => [f.id, f])))
+    const metaByKey = createMemo(() => {
+      const map = new Map<string, ConversationMeta>()
+      for (const m of store.meta) {
+        map.set(`${m.key.directory}::${m.key.sessionId}`, m)
+      }
+      return map
+    })
+
+    const metaFor = (key: { directory: string; sessionId: string }) => metaByKey().get(`${key.directory}::${key.sessionId}`)
 
     const upsertFolder = (input: { id?: string; name: string }) => {
       const now = Date.now()
@@ -62,14 +71,31 @@ export const { use: useConversation, provider: ConversationProvider } = createSi
       )
     }
 
+    const togglePinned = (key: { directory: string; sessionId: string }) => {
+      const now = Date.now()
+      setStore(
+        "meta",
+        produce((draft) => {
+          const idx = draft.findIndex((m) => m.key.directory === key.directory && m.key.sessionId === key.sessionId)
+          if (idx === -1) {
+            draft.unshift({ key, pinned: true, updatedAt: now })
+            return
+          }
+          draft[idx] = { ...draft[idx], pinned: !draft[idx]?.pinned, updatedAt: now }
+        }),
+      )
+    }
+
     return {
       folders: () => store.folders,
       meta: () => store.meta,
       folderById,
+      metaByKey,
+      metaFor,
       upsertFolder,
       removeFolder,
       setConversationFolder,
+      togglePinned,
     }
   },
 })
-

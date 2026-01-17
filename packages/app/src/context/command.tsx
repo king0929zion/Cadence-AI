@@ -26,6 +26,23 @@ export interface CommandOption {
   onHighlight?: () => (() => void) | void
 }
 
+function normalizeKeyToken(token: string): string {
+  switch (token) {
+    case "comma":
+      return ","
+    case "period":
+      return "."
+    case "slash":
+      return "/"
+    case "space":
+      return " "
+    case "esc":
+      return "escape"
+    default:
+      return token
+  }
+}
+
 export function parseKeybind(config: string): Keybind[] {
   if (!config || config === "none") return []
 
@@ -62,7 +79,7 @@ export function parseKeybind(config: string): Keybind[] {
           keybind.shift = true
           break
         default:
-          keybind.key = part
+          keybind.key = normalizeKeyToken(part)
           break
       }
     }

@@ -13,6 +13,7 @@ import { useGlobalSync } from "@/context/global-sync"
 import { ConversationList } from "./conversation-list"
 import { getFilename } from "@opencode-ai/util/path"
 import { Persist, persisted } from "@/utils/persist"
+import { useCommand } from "@/context/command"
 
 export function CadenceSidebar() {
   const navigate = useNavigate()
@@ -22,6 +23,7 @@ export function CadenceSidebar() {
   const dialog = useDialog()
   const server = useServer()
   const sync = useGlobalSync()
+  const command = useCommand()
 
   const [ui, setUi] = persisted(
     Persist.global("cadence.sidebar", ["cadence.sidebar.v1"]),
@@ -37,6 +39,17 @@ export function CadenceSidebar() {
     if (!dir) return
     return sync.child(dir)[0]
   })
+
+  let searchInputRef: HTMLInputElement | undefined
+  const focusSearch = () => {
+    setUi("collapsed", false)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        searchInputRef?.focus()
+        searchInputRef?.select?.()
+      })
+    })
+  }
 
   const navItems = createMemo(
     () =>
@@ -54,6 +67,18 @@ export function CadenceSidebar() {
     if (!q) return workspace.session
     return workspace.session.filter((s) => (s.title || "未命名对话").toLowerCase().includes(q))
   })
+
+  command.register(() => [
+    {
+      id: "cadence.chat.search",
+      title: "搜索对话",
+      description: "在当前项目中搜索对话标题",
+      category: "Cadence",
+      keybind: "mod+f",
+      slash: "search",
+      onSelect: focusSearch,
+    },
+  ])
 
   async function chooseProject() {
     function resolve(result: string | string[] | null) {
@@ -145,6 +170,9 @@ export function CadenceSidebar() {
             placeholder="搜索对话"
             class="w-full"
             onInput={(e) => setUi("query", e.currentTarget.value)}
+            ref={(el) => {
+              searchInputRef = el
+            }}
           />
         </Show>
 
@@ -159,6 +187,7 @@ export function CadenceSidebar() {
             <Show when={activeWorkspace()} keyed>
               {() => (
                 <ConversationList
+                  directory={activeDirectory()!}
                   sessions={filteredSessions()}
                   selectedId={params.id}
                   onSelect={(session) => navigate(`/chat/${params.dir}/session/${session.id}`)}
