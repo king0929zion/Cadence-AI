@@ -4,6 +4,7 @@ import { A, useLocation, useNavigate, useParams } from "@solidjs/router"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 import { TextField } from "@opencode-ai/ui/text-field"
+import { For, Match, Show, Switch, createMemo } from "solid-js"
 import { usePlatform } from "@/context/platform"
 import { useDialog } from "@opencode-ai/ui/context/dialog"
 import { DialogSelectDirectory } from "@/components/dialog-select-directory"
@@ -200,8 +201,8 @@ export function CadenceSidebar() {
             value={ui.query}
             placeholder="搜索对话"
             class="w-full"
-            onInput={(e) => setUi("query", e.currentTarget.value)}
-            ref={(el) => {
+            onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => setUi("query", e.currentTarget.value)}
+            ref={(el: HTMLInputElement) => {
               searchInputRef = el
             }}
           />
@@ -216,11 +217,11 @@ export function CadenceSidebar() {
         <Switch>
           <Match when={activeDirectory()}>
             <Show when={activeWorkspace()} keyed>
-              {() => (
+              {(workspace) => (
                 <>
                   <FolderManager
                     directory={activeDirectory()!}
-                    sessions={activeWorkspace()!.session}
+                    sessions={workspace.session}
                     collapsed={ui.collapsed}
                     filter={ui.filter}
                     onFilterChange={(filter) => setUi("filter", filter)}

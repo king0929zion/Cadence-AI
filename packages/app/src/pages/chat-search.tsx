@@ -1,4 +1,5 @@
 ﻿import { useLocation, useNavigate } from "@solidjs/router"
+import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 import { TextField } from "@opencode-ai/ui/text-field"
@@ -158,11 +159,11 @@ export default function ChatSearch() {
                 value={query()}
                 placeholder="输入关键字（标题搜索）"
                 class="w-full"
-                ref={(el) => {
+                ref={(el: HTMLInputElement) => {
                   queryInputRef = el
                 }}
-                onInput={(e) => setQuery(e.currentTarget.value)}
-                onKeyDown={(e) => {
+                onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => setQuery(e.currentTarget.value)}
+                onKeyDown={(e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
                   if (e.key === "Escape") {
                     e.preventDefault()
                     navigate(returnTo())

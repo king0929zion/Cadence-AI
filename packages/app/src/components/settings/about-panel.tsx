@@ -5,6 +5,7 @@ import { usePlatform } from "@/context/platform"
 import { useServer } from "@/context/server"
 import { useGlobalSync } from "@/context/global-sync"
 import { copyText } from "@/utils/clipboard"
+import { createMemo } from "solid-js"
 
 function buildConfigPath(home?: string) {
   if (!home) return "~/.config/opencode/opencode.json"

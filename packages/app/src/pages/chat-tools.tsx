@@ -1,4 +1,5 @@
 ﻿import { useLocation, useNavigate } from "@solidjs/router"
+import { For, Show, createEffect, createMemo, createSignal, onMount } from "solid-js"
 import { Button } from "@opencode-ai/ui/button"
 import { Icon } from "@opencode-ai/ui/icon"
 import { TextField } from "@opencode-ai/ui/text-field"
@@ -263,14 +264,14 @@ export default function ChatTools() {
                 value={search()}
                 placeholder="搜索指令（例如：tools / chat / find）"
                 class="w-full"
-                ref={(el) => {
+                ref={(el: HTMLInputElement) => {
                   searchInputRef = el
                 }}
-                onInput={(e) => setSearch(e.currentTarget.value)}
+                onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => setSearch(e.currentTarget.value)}
               />
               <RadioGroup
                 size="small"
-                options={["常用", "全部"] as const}
+                options={["常用", "全部"] as ("常用" | "全部")[]}
                 current={commandScope()}
                 onSelect={(v) => v && setCommandScope(v)}
               />
@@ -299,7 +300,7 @@ export default function ChatTools() {
                           icon="copy"
                           variant="ghost"
                           class="size-7 rounded-md"
-                          onClick={async (e) => {
+                          onClick={async (e: MouseEvent) => {
                             e.stopPropagation()
                             const ok = await copyText(`/${opt.slash}`)
                             showToast({ title: ok ? "已复制指令" : "复制失败", description: ok ? `/${opt.slash}` : undefined })
