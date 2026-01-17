@@ -10,7 +10,7 @@ import { getFilename } from "@opencode-ai/util/path"
 import { useServer } from "@/context/server"
 
 function extractDirFromPath(pathname: string): string | undefined {
-  const match = pathname.match(/^\\/chat\\/([^/]+)(?:\\/|$)/)
+  const match = pathname.match(/^\/chat\/([^/]+)(?:\/|$)/)
   if (!match?.[1]) return
   try {
     return base64Decode(match[1])
