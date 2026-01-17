@@ -30,6 +30,11 @@ jobs:
         run: |
           bun --version
 
+      - name: Configure git identity (tests)
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+
       - name: Typecheck (app)
         run: bun run --cwd packages/app typecheck
 
@@ -41,4 +46,3 @@ jobs:
 
       - name: Tests (opencode)
         run: bun run --cwd packages/opencode test
-
