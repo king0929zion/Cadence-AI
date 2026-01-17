@@ -4,6 +4,10 @@ export abstract class NamedError extends Error {
   abstract schema(): z.core.$ZodType
   abstract toObject(): { name: string; data: any }
 
+  static isNamedError(input: unknown): input is { name: string; data: any } {
+    return typeof input === "object" && input !== null && "name" in input && "data" in input
+  }
+
   static create<Name extends string, Data extends z.core.$ZodType>(name: Name, data: Data) {
     const schema = z
       .object({
