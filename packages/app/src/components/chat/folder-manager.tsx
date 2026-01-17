@@ -1,4 +1,3 @@
-import { For, Show, createMemo, createSignal } from "solid-js"
 ﻿import { For, Show, createMemo, createSignal } from "solid-js"
 import type { Session } from "@opencode-ai/sdk/v2/client"
 import { Button } from "@opencode-ai/ui/button"
@@ -67,7 +66,7 @@ export function FolderManager(props: {
               value={name()}
               placeholder="输入文件夹名称"
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => setName(e.currentTarget.value)}
-              onKeyDown={(e) => {
+              onKeyDown={(e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
                 if (e.key === "Enter") submit()
               }}
             />

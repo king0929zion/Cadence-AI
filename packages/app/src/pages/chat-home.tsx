@@ -1,4 +1,3 @@
-﻿import { For, createEffect, createMemo } from "solid-js"
 import { For, Show, createEffect, createMemo } from "solid-js"
 import { useNavigate } from "@solidjs/router"
 import { useGlobalSync } from "@/context/global-sync"

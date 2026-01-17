@@ -1,4 +1,3 @@
-import { For, Show, createMemo, createSignal } from "solid-js"
 ﻿import { For, Show, createMemo, createSignal } from "solid-js"
 import { produce } from "solid-js/store"
 import type { Message, Part, Session } from "@opencode-ai/sdk/v2/client"
@@ -90,7 +89,7 @@ export function ConversationList(props: {
               value={name()}
               placeholder="输入文件夹名称"
               onInput={(e: InputEvent & { currentTarget: HTMLInputElement }) => setName(e.currentTarget.value)}
-              onKeyDown={(e) => {
+              onKeyDown={(e: KeyboardEvent & { currentTarget: HTMLInputElement }) => {
                 if (e.key === "Enter") submit()
               }}
             />
